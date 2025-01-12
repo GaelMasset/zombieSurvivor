@@ -1,0 +1,93 @@
+package com.example.zombiesurvivor;
+
+import android.graphics.Canvas;
+import android.view.SurfaceHolder;
+
+public class PageLoop extends Thread{
+    public static final double MAX_UPS = 100;
+    private static final double UPS_PERIOD = 1000/MAX_UPS;
+    private boolean isRunning = false;
+    private SurfaceHolder surfaceHolder;
+    private Page page;
+    private double averageUPS;
+    private double averageFPS;
+
+    public PageLoop(Page game, SurfaceHolder surfaceHolder) {
+        this.surfaceHolder = surfaceHolder;
+        this.page = game;
+    }
+
+    public double getAverageUPS() {
+        return averageUPS;
+    }
+
+    public double getAverageFPS() {
+        return averageFPS;
+    }
+
+    public void startLoop() {
+        isRunning = true;
+        start();
+    }
+
+    @Override
+    public void run(){
+        super.run();
+        //Declarations
+        int updateCount = 0;
+        int frameCount = 0;
+
+        long startTime;
+        long elapsedTime;
+        long sleepTime;
+
+        //Jeu
+        Canvas canvas;
+        startTime = System.currentTimeMillis();
+        while(isRunning){
+            //Mets le jeu à jour
+            try{
+                canvas = surfaceHolder.lockCanvas();
+                synchronized (surfaceHolder){
+                    page.update();
+                    updateCount++;
+                    page.draw(canvas);
+                }
+                surfaceHolder.unlockCanvasAndPost(canvas);
+                frameCount++;
+            } catch(IllegalArgumentException e){
+                e.printStackTrace();
+            }
+
+            //Mets le jeu en pause pour pas dépasser un certain UPS
+            elapsedTime = System.currentTimeMillis() - startTime;
+            sleepTime = (long) (updateCount*UPS_PERIOD - elapsedTime);
+            if(sleepTime > 0){
+                try {
+                    sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            //Skip des images pour garder le rythme je crois ?
+            while(sleepTime < 0){
+                page.update();
+                updateCount++;
+                elapsedTime = System.currentTimeMillis() - startTime;
+                sleepTime = (long) (updateCount*UPS_PERIOD - elapsedTime);
+            }
+
+            // Calcul FPS
+            elapsedTime = System.currentTimeMillis() - startTime;
+            if(elapsedTime > 1000){
+                averageUPS = updateCount / (elapsedTime/1000);
+                averageFPS = frameCount / (elapsedTime/1000);
+                updateCount = 0;
+                frameCount = 0;
+                startTime = System.currentTimeMillis();
+            }
+        }
+
+    }
+}
