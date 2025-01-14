@@ -1,6 +1,10 @@
-package com.example.zombiesurvivor;
+package com.example.zombiesurvivor.Base;
+
+import static com.example.zombiesurvivor.Base.MainActivity.*;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.SurfaceHolder;
 
 public class PageLoop extends Thread{
@@ -49,9 +53,15 @@ public class PageLoop extends Thread{
             try{
                 canvas = surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder){
+                    canvas.drawColor(Color.BLACK);
+                    canvas.translate(offsetX, offsetY);
                     page.update();
                     updateCount++;
                     page.draw(canvas);
+                    canvas.drawRect(-offsetX, -offsetY, 0, screenHeight, new Paint(Color.BLACK));
+                    canvas.drawRect(-offsetX,-offsetY, screenWidth, 0, new Paint(Color.BLACK));
+                    canvas.drawRect(canvasWidth, -offsetY, screenWidth, screenHeight, new Paint(Color.BLACK));
+                    canvas.drawRect(-offsetX, canvasHeight, screenWidth, screenHeight, new Paint(Color.BLACK));
                 }
                 surfaceHolder.unlockCanvasAndPost(canvas);
                 frameCount++;
@@ -88,6 +98,5 @@ public class PageLoop extends Thread{
                 startTime = System.currentTimeMillis();
             }
         }
-
     }
 }
