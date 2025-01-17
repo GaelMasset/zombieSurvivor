@@ -1,9 +1,9 @@
 package com.example.zombiesurvivor;
 
-import static com.example.zombiesurvivor.Base.MainActivity.facteurZoom;
-
 import android.content.Context;
 import android.graphics.Canvas;
+
+import com.example.zombiesurvivor.Player.Player;
 
 import java.util.ArrayList;
 

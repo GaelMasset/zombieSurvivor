@@ -53,8 +53,25 @@ public class Bullet extends Movable {
     // Dessiner la balle sur le Canvas (si nécessaire)
     @Override
     public void draw(Canvas canvas) {
+        // Save the current canvas state
+        canvas.save();
+
+        // Translate to the bullet's position
+        canvas.translate((float) posX, (float) posY);
+
+        // Rotate the canvas by the bullet's angle + 90 degrees (convert to degrees)
+        canvas.rotate((float) Math.toDegrees(angle) + 0);
+
+        // Translate back so rotation happens around bullet center
+        canvas.translate((float) -posX, (float) -posY);
+
+        // Draw the bullet using parent draw method
         super.draw(canvas);
+
+        // Restore the canvas to its original state
+        canvas.restore();
     }
+
 
     // Gestion des collisions (si la balle touche un objet Destroyable)
     public void hit(Movable m) {

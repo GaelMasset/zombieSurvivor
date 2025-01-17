@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 
 public abstract class BoutonDeplacement {
     protected boolean isPressed;
-    protected double actuatorX;
+    public double actuatorX;
     protected double actuatorY;
 
     public abstract void draw(Canvas canvas);

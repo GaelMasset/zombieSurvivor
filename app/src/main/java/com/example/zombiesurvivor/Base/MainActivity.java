@@ -19,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
     public static int canvasWidth;
     public static int offsetX;
     public static int offsetY;
-    public static float targetHauteur = 1200;
-    public static float facteurZoom = (canvasHeight/ targetHauteur);
+    public static float targetHauteur = 750;
+    public static float facteurZoom;
 
 
     @Override
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         }
         MainActivity.canvasHeight = canvasHeight;
         MainActivity.canvasWidth = canvasWidth;
-
+        facteurZoom = (canvasHeight/ targetHauteur);
 
 
         // Calcul des marges pour centrer l'élément

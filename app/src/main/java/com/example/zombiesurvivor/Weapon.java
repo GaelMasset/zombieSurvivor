@@ -1,16 +1,20 @@
 package com.example.zombiesurvivor;
 
-public class Weapon {
+import android.content.Context;
+import android.graphics.Canvas;
+
+import com.example.zombiesurvivor.Player.Action;
+import com.example.zombiesurvivor.Player.Player;
+
+public class Weapon extends Item{
     private int firerate; // Tirs par minute
     private double precision;
     private Bullet munitionType;
     private double heatPerFire;
-    private Game partie;
-
-    // Temps restant avant le prochain tir (en secondes)
     private double cooldownRemaining = 0.0;
 
-    public Weapon(double precision, int firerate, Bullet munitionType, double heatPerFire) {
+    public Weapon(Context context, double posX, double posY, int tailleX, int tailleY, String cheminImages, boolean isAnimating, int timeCentiBetweenFrame, double enfoncementTop, double enfoncementBottom, double enfoncementLeft, double enfoncementRight, double precision, int firerate, Bullet munitionType, double heatPerFire, int timeCentiToUse) {
+        super(context, posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight, timeCentiToUse, false, 1);
         this.firerate = firerate;
         this.precision = precision;
         this.munitionType = munitionType;
@@ -33,16 +37,24 @@ public class Weapon {
         return 60000 / firerate;
     }
 
-    public boolean fire(Joystick joystick) {
+    public boolean fire() {
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastFireTime >= getFireCooldown()) {
 
-            double angle = Math.atan2(joystick.getActuatorY(), joystick.getActuatorX());
-            System.out.println(angle);
-            angle = applyPrecision(angle);
+            Bullet newBullet;
+            double angle;
 
-            Bullet newBullet = new Bullet(munitionType, angle, this.munitionType.getRange());
-            newBullet.setWeapon(this);
+            if (partie.getJoueur().getLastDirection() == Action.WALKING_RIGHT) {
+                angle = 0; // Angle pour aller à droite
+                newBullet = new Bullet(munitionType, angle, this.munitionType.getRange());
+                newBullet.setWeapon(this);
+            } else {
+                angle = Math.PI; // Angle pour aller à gauche (180° en radians)
+                newBullet = new Bullet(munitionType, angle, this.munitionType.getRange());
+                newBullet.setWeapon(this);
+            }
+
+
 
             newBullet.setPosX(partie.getJoueur().posX + (double) partie.getJoueur().tailleX / 2);
             newBullet.setPosY(partie.getJoueur().posY + (double) partie.getJoueur().tailleY / 2);
@@ -57,7 +69,9 @@ public class Weapon {
         return false;
     }
 
+
     public void update(double deltaTime) {
+        super.update();
         if (cooldownRemaining > 0.0) {
             cooldownRemaining -= deltaTime;
         }
@@ -66,7 +80,11 @@ public class Weapon {
     public Game getGame(){
         return partie;
     }
-    public void setGame(Game partie) {
-        this.partie = partie;
+
+
+    @Override
+    public boolean use(Game game) {
+        super.use(game);
+        return fire();
     }
 }

@@ -34,8 +34,9 @@ public class Page extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
 
         fenetre.draw(canvas);
-        drawFPS(canvas);
-        drawUPS(canvas);
+
+        /*drawFPS(canvas);
+        drawUPS(canvas);*/
     }
 
     @Override

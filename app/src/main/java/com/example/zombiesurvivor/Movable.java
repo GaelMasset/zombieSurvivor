@@ -15,14 +15,14 @@ public abstract class Movable implements Cloneable{
     protected double posY;
     protected int tailleX;
     protected int tailleY;
-    protected double enfoncementTop;
-    protected double enfoncementBottom;
-    protected double enfoncementLeft;
-    protected double enfoncementRight;
+    public double enfoncementTop;
+    public double enfoncementBottom;
+    public double enfoncementLeft;
+    public double enfoncementRight;
     protected String cheminImages;
     protected boolean isAnimating;
-    final int timeCentiBetweenFrame;
-    private int currentCentiFrame;
+    protected int timeCentiBetweenFrame;
+    protected int currentCentiFrame;
     private ArrayList<Bitmap> images = new ArrayList<Bitmap>();
 
     /*
@@ -190,6 +190,10 @@ public abstract class Movable implements Cloneable{
             }
         }
         return touchingMovables;
+    }
+
+    public Bitmap getBitmap(int i) {
+        return this.images.get(i);
     }
 
 }
