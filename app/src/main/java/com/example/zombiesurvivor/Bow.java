@@ -15,7 +15,7 @@ public class Bow extends Weapon{
         };
     }
 
-    public Bow(Context context, double posX, double posY, int tailleX, int tailleY, String cheminImages, boolean isAnimating, int timeCentiBetweenFrame, double enfoncementTop, double enfoncementBottom, double enfoncementLeft, double enfoncementRight, double precision, int firerate, Bullet munitionType, double heatPerFire, int timeCentiToUse) {
-        super(context, posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight, precision, firerate, munitionType, heatPerFire, timeCentiToUse);
+    public Bow(Context context, double posX, double posY, int tailleX, int tailleY, String cheminImages, boolean isAnimating, int timeCentiBetweenFrame,int postUseAnimTime, double enfoncementTop, double enfoncementBottom, double enfoncementLeft, double enfoncementRight, double precision, int firerate, Bullet munitionType, double heatPerFire, int timeCentiToUse) {
+        super(context, posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame,postUseAnimTime, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight, precision, firerate, munitionType, heatPerFire, timeCentiToUse);
     }
 }

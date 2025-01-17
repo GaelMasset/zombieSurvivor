@@ -53,12 +53,12 @@ public class FenetreTest extends Fenetre {
         joystickDeplacement = new Joystick(p.getContext(), pourcentLongueur(15) ,canvasHeight-pourcentHauteur(26), pourcentLongueur(3), pourcentLongueur(8), "joystick_bottom_1", "joystick_top_1");
         boutonAttaque = new Bouton(p.getContext(), canvasWidth-pourcentLongueur(15) ,canvasHeight-pourcentHauteur(26), pourcentLongueur(8), pourcentLongueur(8), "joystick_bottom_", false, 100, 0, 0, 0, 0);
 
-        Bow arme = new Bow(page.getContext(), 0, 0, 80, 96, "item_bow", false, 100,0, 0, 0, 0,95, 120,
+        Bow arme = new Bow(page.getContext(), 0, 0, 80, 96, "item_bow", false, 100,0,0, 0, 0, 0,95, 120,
                 new Bullet(p.getContext(),0, 0, 36, 20, "pistol_bullet", false, 100,0,0,0,0, 5, 10, 0, 2000),1, 100);
 
-        PotionSoin pot = new PotionSoin(page.getContext(), 0, 0, 80, 96, "item_potion", false, 100, 0, 0, 0, 0, 250, 10);
+        PotionSoin pot = new PotionSoin(page.getContext(), 0, 0, 80, 96, "item_potion", false, 100,0 , 0, 0, 0, 0, 250, 10);
 
-        WeaponBaton armeMelee = new WeaponBaton(page.getContext(), 0, 0, 80, 96, "item_sword1", false, 100, 0, 0, 0, 0, 100, 50, 150);
+        WeaponBaton armeMelee = new WeaponBaton(page.getContext(), 0, 0, 80, 96, "item_sword1", false, 20,60, 0, 0, 0, 0, 40, 50, 150);
         partie = new Game(page.getContext(), new Player(page.getContext(), 3000, 3000, 80, 96,
                     "character",100, 79,0,0,0, true, 100, 50,100, 5,
                     joystickDeplacement, boutonAttaque, partie), c);

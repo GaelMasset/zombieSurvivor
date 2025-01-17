@@ -209,7 +209,6 @@ public class Player extends EtreHumain {
 
         if(hotbar.getSelectedStack() != null)hotbar.getSelectedStack().getItem().setPosX(this.getPosX());
         if(hotbar.getSelectedStack() != null)hotbar.getSelectedStack().getItem().setPosY(this.getPosY());
-        System.out.println("Slot choisi : " + (hotbar.getSelectedSlot()));
 
     }
 
@@ -222,7 +221,7 @@ public class Player extends EtreHumain {
 
 
     private void updateAction() {
-        if(hotbar.getSelectedStack() != null && hotbar.getSelectedStack().getItem().getIsBeingUsed()){
+        if(hotbar.getSelectedStack() != null && !hotbar.getSelectedStack().getItem().animationOver()){
             action=Action.USING;
             return;
         }

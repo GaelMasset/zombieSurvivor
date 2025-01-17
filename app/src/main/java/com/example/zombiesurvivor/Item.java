@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public abstract class Item extends Movable{
     protected String nom;
     protected int timeCentiToUse;
+    protected int postUseAnimTime;
     private int currentUseTimer = -1;
     private boolean used = true;
     private boolean isStackable;
@@ -20,11 +21,12 @@ public abstract class Item extends Movable{
     protected Game partie;
 
 
-    public Item(Context context, double posX, double posY, int tailleX, int tailleY, String cheminImages, boolean isAnimating, int timeCentiBetweenFrame, double enfoncementTop, double enfoncementBottom, double enfoncementLeft, double enfoncementRight, int timeCentiToUse, boolean isStackable, int tailleStack) {
+    public Item(Context context, double posX, double posY, int tailleX, int tailleY, String cheminImages, boolean isAnimating, int timeCentiBetweenFrame,int postUseAnimTime ,double enfoncementTop, double enfoncementBottom, double enfoncementLeft, double enfoncementRight, int timeCentiToUse, boolean isStackable, int tailleStack) {
         super(context, posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight);
         this.timeCentiToUse = timeCentiToUse;
         this.isStackable = isStackable;
-
+        this.postUseAnimTime = postUseAnimTime;
+        System.out.println("Inintialisation de " + timeCentiToUse + " et " + postUseAnimTime);
         if(isStackable) tailleStack = tailleStack;
         else tailleStack = 1;
 
@@ -72,19 +74,22 @@ public abstract class Item extends Movable{
         return true;
     }
     public void update(){
-        if(!used) currentUseTimer--;
+        if(!animationOver()) currentUseTimer--;
         if(canUse()){
             use(this.partie);
         }
+        System.out.println("anim : " + currentUseTimer);
     }
 
+    public boolean animationOver(){return currentUseTimer <= 0;}
     private boolean canUse() {
-        return currentUseTimer <= 0 && !used;
+        return currentUseTimer <= postUseAnimTime && !used;
     }
 
     public void startUsing(){
         if(used) {
-            this.currentUseTimer = timeCentiToUse;
+            System.out.println("Debut anim : " + timeCentiToUse + " " + postUseAnimTime);
+            this.currentUseTimer = timeCentiToUse+postUseAnimTime;
             used = false;
             currentCentiFrame = 0;
         }
