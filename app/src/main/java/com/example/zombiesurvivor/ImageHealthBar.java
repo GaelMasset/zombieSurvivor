@@ -1,12 +1,9 @@
 package com.example.zombiesurvivor;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import com.example.zombiesurvivor.Player.Player;
-
-import java.util.ArrayList;
+import com.example.zombiesurvivor.mobs.Player;
 
 public class ImageHealthBar extends Image{
     protected Player joueur;

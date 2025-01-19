@@ -1,9 +1,8 @@
 package com.example.zombiesurvivor;
 
 import android.content.Context;
-import android.graphics.Path;
 
-import com.example.zombiesurvivor.Player.Action;
+import com.example.zombiesurvivor.mobs.Action;
 
 public class WeaponBaton extends Item {
     private final int degats;
@@ -30,13 +29,21 @@ public class WeaponBaton extends Item {
 
     //CHANGE OBSTACLES PAR ENEMIES ?
     private boolean hit(Game game) {
-        Movable hitZone = this.clone();
+        Movable hitZone;
         if (game.getJoueur().getLastDirection() == Action.WALKING_RIGHT) {
-            hitZone.setTailleX(hitZone.getTailleX() + attackrange);
+             hitZone = new Zone(context,
+                     game.getJoueur().posX+game.getJoueur().tailleX,
+                     game.getJoueur().posY,
+                     this.attackrange,
+                     game.getJoueur().tailleY);
         } else {
-            hitZone.setTailleY(hitZone.getTailleY() - attackrange);
+            hitZone = new Zone(context,
+                    game.getJoueur().posX-attackrange,
+                    game.getJoueur().posY,
+                    (int) game.getJoueur().posX,
+                    game.getJoueur().tailleY);
         }
-        Movable target = Movable.isOneTouching(hitZone, game.getCarte().getObstacles());
+        Movable target = Movable.isOneTouching(hitZone, game.getMobs());
         if (target != null) {
             if (target instanceof Destroyable) {
                 ((Destroyable) target).damage(this.degats);

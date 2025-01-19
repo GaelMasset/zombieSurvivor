@@ -3,10 +3,7 @@ package com.example.zombiesurvivor.fenetres;
 import static com.example.zombiesurvivor.Base.MainActivity.*;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.view.MotionEvent;
-
-import androidx.core.content.ContextCompat;
 
 import com.example.zombiesurvivor.Base.MainActivity;
 import com.example.zombiesurvivor.Base.Page;
@@ -16,7 +13,6 @@ import com.example.zombiesurvivor.Bullet;
 import com.example.zombiesurvivor.Door;
 import com.example.zombiesurvivor.Floor;
 import com.example.zombiesurvivor.Game;
-import com.example.zombiesurvivor.Image;
 import com.example.zombiesurvivor.ImageHealthBar;
 import com.example.zombiesurvivor.ImageHotbar;
 import com.example.zombiesurvivor.ImageManaBar;
@@ -25,10 +21,8 @@ import com.example.zombiesurvivor.LecteurFichier;
 import com.example.zombiesurvivor.Map;
 import com.example.zombiesurvivor.Obstacle;
 import com.example.zombiesurvivor.PixelText;
-import com.example.zombiesurvivor.Player.Player;
+import com.example.zombiesurvivor.mobs.Player;
 import com.example.zombiesurvivor.PotionSoin;
-import com.example.zombiesurvivor.R;
-import com.example.zombiesurvivor.Weapon;
 import com.example.zombiesurvivor.WeaponBaton;
 
 import java.util.ArrayList;
@@ -56,7 +50,7 @@ public class FenetreTest extends Fenetre {
         Bow arme = new Bow(page.getContext(), 0, 0, 80, 96, "item_bow", false, 100,0,0, 0, 0, 0,95, 120,
                 new Bullet(p.getContext(),0, 0, 36, 20, "pistol_bullet", false, 100,0,0,0,0, 5, 10, 0, 2000),1, 100);
 
-        PotionSoin pot = new PotionSoin(page.getContext(), 0, 0, 80, 96, "item_potion", false, 100,0 , 0, 0, 0, 0, 250, 10);
+        PotionSoin pot = new PotionSoin(page.getContext(), 0, 0, 80, 96, "item_potion", false, 100,0 , 0, 0, 0, 0, 250, 100);
 
         WeaponBaton armeMelee = new WeaponBaton(page.getContext(), 0, 0, 80, 96, "item_sword1", false, 20,60, 0, 0, 0, 0, 40, 50, 150);
         partie = new Game(page.getContext(), new Player(page.getContext(), 3000, 3000, 80, 96,
@@ -70,6 +64,7 @@ public class FenetreTest extends Fenetre {
         LecteurFichier.chargerPartie(page.getContext(), partie, "niveau1.txt");
         arme.setGame(partie);
         pot.setGame(partie);
+        partie.addMonster();
         armeMelee.setGame(partie);
         for(Obstacle o: obstacles){
             o.setPartie(partie);

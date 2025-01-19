@@ -1,10 +1,8 @@
 package com.example.zombiesurvivor;
 
 import android.content.Context;
-import android.graphics.Canvas;
 
-import com.example.zombiesurvivor.Player.Action;
-import com.example.zombiesurvivor.Player.Player;
+import com.example.zombiesurvivor.mobs.Action;
 
 public class Weapon extends Item{
     private int firerate; // Tirs par minute

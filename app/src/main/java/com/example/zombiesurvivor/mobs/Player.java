@@ -1,38 +1,32 @@
-package com.example.zombiesurvivor.Player;
+package com.example.zombiesurvivor.mobs;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
 import com.example.zombiesurvivor.Base.MainActivity;
 import com.example.zombiesurvivor.Bouton;
 import com.example.zombiesurvivor.Bow;
-import com.example.zombiesurvivor.EtreHumain;
 import com.example.zombiesurvivor.Game;
 import com.example.zombiesurvivor.Inventory;
 import com.example.zombiesurvivor.Item;
 import com.example.zombiesurvivor.Joystick;
 import com.example.zombiesurvivor.Movable;
 import com.example.zombiesurvivor.PotionSoin;
-import com.example.zombiesurvivor.Weapon;
 import com.example.zombiesurvivor.WeaponBaton;
 
 import java.util.ArrayList;
 
-public class Player extends EtreHumain {
+public class Player extends Mob {
     private static final int NB_SLOT_HOTBAR = 4;
     private static final double MAX_SPEEED = 0.2;
-    private Game partie;
     private Inventory hotbar = new Inventory(NB_SLOT_HOTBAR);
     private int mana;
     private int maxMana;
     private Joystick joyStickDeplacement;
     private Bouton joyStickArme;
     private int solde;
-    private Action action = Action.IDLE;
-    private ArrayList<ArrayList<Bitmap>> animationsJoueur = new ArrayList<ArrayList<Bitmap>>();
-    private Action lastDirection = Action.WALKING_RIGHT;
+
+
 
 
     public Player(Context context, int posX, int posY, int tailleX, int tailleY, String floor, int maxHp,double enfoncementTop, double enfoncementBottom,
@@ -43,30 +37,11 @@ public class Player extends EtreHumain {
         this.maxMana = manaMax;
         this.mana = manaMax;
 
+    }
 
-        //Decode all images that has the same name as the provided string
-        String[] animations = {
-                "_idle","_walking","_shootingbow", "_drinking", "_hittingsword"
-        };
-        int slot = 0;
-        for(String animation: animations) {
-            animationsJoueur.add(new ArrayList<Bitmap>());
-            int i = 1;
-            boolean moreImg = true;
-            while (moreImg) {
-                int resId = context.getResources().getIdentifier(cheminImages + animation +i, "drawable", context.getPackageName());
-                if (resId != 0) {
-                    Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
-                    animationsJoueur.get(slot).add(Bitmap.createScaledBitmap(bitmap, tailleX, tailleY, false));
-                    i++;
-                } else {
-                    moreImg = false;
-                }
-            }
-            slot++;
-        }
-        System.out.println("Taille de truc: " + animationsJoueur.get(2).size());
-
+    @Override
+    public String[] getAnimations() {
+        return new String[]{"_idle","_walking","_shootingbow", "_drinking", "_hittingsword"};
     }
 
     @Override
@@ -175,26 +150,26 @@ public class Player extends EtreHumain {
             switch (action) {
                 case IDLE:
                     timeCentiBetweenFrame = 50;
-                    currentCentiFrame = currentCentiFrame % (animationsJoueur.get(0).size() * timeCentiBetweenFrame);
+                    currentCentiFrame = currentCentiFrame % (animations.get(0).size() * timeCentiBetweenFrame);
 
                     break;
                 case WALKING_LEFT:
                 case WALKING_RIGHT:
                     timeCentiBetweenFrame = 18;
-                    currentCentiFrame = currentCentiFrame % (animationsJoueur.get(1).size() * timeCentiBetweenFrame);
+                    currentCentiFrame = currentCentiFrame % (animations.get(1).size() * timeCentiBetweenFrame);
                     break;
                 case USING:
                     if(hotbar.getSelectedStack() != null && hotbar.getSelectedStack().getItem() instanceof Bow){
                         timeCentiBetweenFrame = 25;
-                        currentCentiFrame = currentCentiFrame % (animationsJoueur.get(2).size() * timeCentiBetweenFrame);
+                        currentCentiFrame = currentCentiFrame % (animations.get(2).size() * timeCentiBetweenFrame);
                     }
                     if(hotbar.getSelectedStack() != null && hotbar.getSelectedStack().getItem() instanceof PotionSoin){
                         timeCentiBetweenFrame = 50;
-                        currentCentiFrame = currentCentiFrame % (animationsJoueur.get(3).size() * timeCentiBetweenFrame);
+                        currentCentiFrame = currentCentiFrame % (animations.get(3).size() * timeCentiBetweenFrame);
                     }
                     if(hotbar.getSelectedStack() != null && hotbar.getSelectedStack().getItem() instanceof WeaponBaton){
                         timeCentiBetweenFrame = 20;
-                        currentCentiFrame = currentCentiFrame % (animationsJoueur.get(4).size() * timeCentiBetweenFrame);
+                        currentCentiFrame = currentCentiFrame % (animations.get(4).size() * timeCentiBetweenFrame);
                     }
                 default:
                     break;
@@ -251,7 +226,7 @@ public class Player extends EtreHumain {
                 switch (lastDirection) {
                     case WALKING_RIGHT:
                         canvas.drawBitmap(
-                                animationsJoueur.get(1).get(currentCentiFrame / timeCentiBetweenFrame),
+                                animations.get(1).get(currentCentiFrame / timeCentiBetweenFrame),
                                 (float) posX,
                                 (float) posY,
                                 null
@@ -266,7 +241,7 @@ public class Player extends EtreHumain {
                     case WALKING_LEFT:
                         canvas.drawBitmap(
                                 MainActivity.createMirroredBitmap(
-                                        animationsJoueur.get(1).get(currentCentiFrame / timeCentiBetweenFrame)
+                                        animations.get(1).get(currentCentiFrame / timeCentiBetweenFrame)
                                 ),
                                 (float) posX,
                                 (float) posY,
@@ -288,7 +263,7 @@ public class Player extends EtreHumain {
                     case WALKING_LEFT:
                         canvas.drawBitmap(
                                 MainActivity.createMirroredBitmap(
-                                        animationsJoueur.get(0).get(currentCentiFrame / timeCentiBetweenFrame)
+                                        animations.get(0).get(currentCentiFrame / timeCentiBetweenFrame)
                                 ),
                                 (float) posX,
                                 (float) posY,
@@ -305,7 +280,7 @@ public class Player extends EtreHumain {
                         break;
                     case WALKING_RIGHT:
                         canvas.drawBitmap(
-                                animationsJoueur.get(0).get(currentCentiFrame / timeCentiBetweenFrame),
+                                animations.get(0).get(currentCentiFrame / timeCentiBetweenFrame),
                                 (float) posX,
                                 (float) posY,
                                 null
@@ -324,7 +299,7 @@ public class Player extends EtreHumain {
                     case WALKING_LEFT:
                         canvas.drawBitmap(
                                 MainActivity.createMirroredBitmap(
-                                        animationsJoueur.get(getBonNbAnimJoueur()).get(currentCentiFrame / timeCentiBetweenFrame)
+                                        animations.get(getBonNbAnimJoueur()).get(currentCentiFrame / timeCentiBetweenFrame)
                                 ),
                                 (float) posX,
                                 (float) posY,
@@ -341,7 +316,7 @@ public class Player extends EtreHumain {
                         break;
                     case WALKING_RIGHT:
                         canvas.drawBitmap(
-                                animationsJoueur.get(getBonNbAnimJoueur()).get(currentCentiFrame / timeCentiBetweenFrame),
+                                animations.get(getBonNbAnimJoueur()).get(currentCentiFrame / timeCentiBetweenFrame),
                                 (float) posX,
                                 (float) posY,
                                 null
@@ -357,7 +332,11 @@ public class Player extends EtreHumain {
         }
     }
 
-
+    @Override
+    public void damage(int hp){
+        super.damage(hp);
+        System.out.println("OUIIILLLLLEELELLELELE");
+    }
 
     public void setGame(Game game) {
         this.partie = game;

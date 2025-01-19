@@ -78,7 +78,6 @@ public abstract class Item extends Movable{
         if(canUse()){
             use(this.partie);
         }
-        System.out.println("anim : " + currentUseTimer);
     }
 
     public boolean animationOver(){return currentUseTimer <= 0;}

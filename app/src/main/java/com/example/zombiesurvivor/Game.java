@@ -3,7 +3,9 @@ package com.example.zombiesurvivor;
 import android.content.Context;
 import android.graphics.Canvas;
 
-import com.example.zombiesurvivor.Player.Player;
+import com.example.zombiesurvivor.mobs.Loup;
+import com.example.zombiesurvivor.mobs.Mob;
+import com.example.zombiesurvivor.mobs.Player;
 
 import java.util.ArrayList;
 
@@ -11,7 +13,7 @@ public class Game {
     private Player joueur;
     private Map carte;
     private Camera camera;
-    private ArrayList<Zombie> zombies = new ArrayList<Zombie>();
+    private ArrayList<Mob> zombies = new ArrayList<Mob>();
     private ArrayList<Bullet> balles = new ArrayList<Bullet>();
     private Context context;
 
@@ -32,6 +34,9 @@ public class Game {
         for(Bullet balle: balles){
             balle.draw(canvas);
         }
+        for(Mob mobs: zombies){
+            mobs.draw(canvas);
+        }
     }
 
     public void update(){
@@ -41,7 +46,13 @@ public class Game {
         for(int i = 0; i < balles.size(); i++){
             balles.get(i).update();
         }
+        for(Mob mobs: zombies){
+            mobs.update();
+        }
+    }
 
+    public void addMonster(){
+        this.zombies.add(new Loup(context, 2500, 3000, 63, 66, "monster_wolf", 0, 0, 0, 0, true, 50, 50, 50, 0.2, this, 30, 100));
     }
 
     public Player getJoueur(){
@@ -56,5 +67,8 @@ public class Game {
     }
     public Context getContext(){
         return this.context;
+    }
+    public ArrayList<? extends Movable> getMobs() {
+        return zombies;
     }
 }
