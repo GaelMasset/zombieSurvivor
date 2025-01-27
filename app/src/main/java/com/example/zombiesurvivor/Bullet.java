@@ -39,7 +39,7 @@ public class Bullet extends Movable {
 
         setPosX(getPosX() + dx);
         setPosY(getPosY() + dy);
-        Movable m = Movable.isOneTouching(this, weapon.getGame().getCarte().getObstacles());
+        Movable m = Movable.isOneTouching(this, weapon.getGame().getMobs());
 
         if(m!=null){
             hit(m);

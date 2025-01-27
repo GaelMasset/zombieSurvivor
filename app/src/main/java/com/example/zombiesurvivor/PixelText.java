@@ -14,21 +14,22 @@ public class PixelText {
     private Context context;
     private Bitmap[] characterBitmaps;
     private String text;
-    private Character[] liste = {'1', '2', '3', '4', '5', '6', '7', '8', '9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t',
+    private boolean center;
+    private Character[] liste = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t',
             'u','v','w','x','y','z'};
     private Character[] listeMaj = {'L'};
 
     private double coX, coY, taille;
     private double spacing;
 
-    public PixelText(Context context, String texte, double coX, double coY, double taille, double letterSpacing) {
+    public PixelText(Context context, String texte, double coX, double coY, double taille, double letterSpacing, boolean center) {
         this.context = context;
         this.coX = coX;
         this.coY = coY;
         this.taille = taille;
         this.text = texte;
         this.spacing = letterSpacing;
-
+        this.center = center;
         loadCharacterBitmaps();
     }
 
@@ -65,19 +66,48 @@ public class PixelText {
     }
 
     public void draw(Canvas canvas) {
-
-
         Paint paint = new Paint();
-        int x = (int) coX+ MainActivity.offsetX;
-        int y = (int) ((int) coY+MainActivity.offsetY-taille);
+        int x = (int) coX;
+        int y = (int) coY;
         double characterSpacing = this.spacing;
 
-        for (int i = 0; i < text.length(); i++) {
-            char currentChar = text.charAt(i);
-            Bitmap charBitmap = characterBitmaps[currentChar];
-            if (charBitmap != null) {
-                canvas.drawBitmap(charBitmap, x, y, paint);
-                x += (int) (charBitmap.getWidth() + characterSpacing);
+        if (!center) {
+            // Dessin normal, sans centrage
+            for (int i = 0; i < text.length(); i++) {
+                char currentChar = text.charAt(i);
+                Bitmap charBitmap = characterBitmaps[currentChar];
+                if (charBitmap != null) {
+                    canvas.drawBitmap(charBitmap, x, y, paint);
+                    x += (int) (charBitmap.getWidth() + characterSpacing); // Avance après chaque lettre
+                }
+            }
+        } else {
+            // Centrer le texte
+            int totalWidth = 0;
+
+            // Calculer la largeur totale du texte
+            for (int i = 0; i < text.length(); i++) {
+                char currentChar = text.charAt(i);
+                Bitmap charBitmap = characterBitmaps[currentChar];
+                if (charBitmap != null) {
+                    totalWidth += charBitmap.getWidth();
+                    if (i < text.length() - 1) {
+                        totalWidth += (int) characterSpacing; // Ajouter l'espacement entre les caractères
+                    }
+                }
+            }
+
+            // Calculer le point de départ pour centrer
+            x -= totalWidth / 2;
+
+            // Dessiner le texte centré
+            for (int i = 0; i < text.length(); i++) {
+                char currentChar = text.charAt(i);
+                Bitmap charBitmap = characterBitmaps[currentChar];
+                if (charBitmap != null) {
+                    canvas.drawBitmap(charBitmap, x, y, paint);
+                    x += (int) (charBitmap.getWidth() + characterSpacing); // Avance après chaque lettre
+                }
             }
         }
     }

@@ -376,4 +376,9 @@ public class Player extends Mob {
     public Inventory getHotbar() {
         return hotbar;
     }
+
+    public void setSpawnPoint(double x, double y){
+        this.posX = x;
+        this.posY = y;
+    }
 }

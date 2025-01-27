@@ -3,27 +3,39 @@ package com.example.zombiesurvivor;
 import android.content.Context;
 import android.graphics.Canvas;
 
+import com.example.zombiesurvivor.Base.MainActivity;
+import com.example.zombiesurvivor.carte.Map;
 import com.example.zombiesurvivor.mobs.Loup;
 import com.example.zombiesurvivor.mobs.Mob;
 import com.example.zombiesurvivor.mobs.Player;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Game {
     private Player joueur;
+    private Image fond;
     private Map carte;
     private Camera camera;
     private ArrayList<Mob> zombies = new ArrayList<Mob>();
     private ArrayList<Bullet> balles = new ArrayList<Bullet>();
     private Context context;
-
+    private double xPlayerSpawn;
+    private double yPlayerSpawn;
 
     public Game(Context context, Player joueur, Map carte) {
         this.joueur = joueur;
         this.carte = carte;
+        this.carte.setContext(context);
         this.camera = new CameraPlayer(this);
         this.context = context;
         joueur.setGame(this);
+
+        fond = new Image(context, 0, 0, MainActivity.canvasWidth, MainActivity.canvasHeight,"example_background" , 80);
+        Random r = new Random();
+        int solPif = r.nextInt(carte.getFloors().size());
+        xPlayerSpawn = carte.getFloors().get(solPif).posX+ (double) carte.getFloors().get(solPif).tailleX /2;
+        yPlayerSpawn = carte.getFloors().get(solPif).posY+ (double) carte.getFloors().get(solPif).tailleY /2;
     }
 
     public void draw(Canvas canvas){
@@ -70,5 +82,17 @@ public class Game {
     }
     public ArrayList<? extends Movable> getMobs() {
         return zombies;
+    }
+
+    public double getxPlayerSpawn() {
+        return xPlayerSpawn;
+    }
+
+    public double getyPlayerSpawn() {
+        return yPlayerSpawn;
+    }
+
+    public Image getFond() {
+        return fond;
     }
 }

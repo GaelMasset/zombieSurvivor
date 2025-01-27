@@ -85,7 +85,8 @@ public class Image {
     }
 
     public void draw(Canvas canvas){
-
+        //PAS DANIMMATION TO DO
+        canvas.drawBitmap(animations.get(0).get(0), (float) posX, (float) posY, null);
     }
     public void update(){
 

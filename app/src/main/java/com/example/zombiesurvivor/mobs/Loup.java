@@ -2,6 +2,8 @@ package com.example.zombiesurvivor.mobs;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 
 import com.example.zombiesurvivor.Base.MainActivity;
 import com.example.zombiesurvivor.Destroyable;
@@ -13,9 +15,11 @@ public class Loup extends Mob{
     private int degatsAttaque;
     private double range;
     private double detectionRange = 400;
+    private double preferedRange = 300;
     private int attackCd = 500;
     private int currentAttackCd;
     private Canvas canvas;
+    Zone hitbox;
 
     public Loup(Context context, double posX, double posY, int tailleX, int tailleY, String cheminImages, double enfoncementTop, double enfoncementBottom, double enfoncementLeft, double enfoncementRight, boolean isAnimating, int timeCentiBetweenFrame, int hp, int maxHp, double speed, Game partie, int degatsAttaque, int range) {
         super(context, posX, posY, tailleX, tailleY, cheminImages, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight, isAnimating, timeCentiBetweenFrame, hp, maxHp, speed, partie);
@@ -44,18 +48,18 @@ public class Loup extends Mob{
 
         // Hitbox à droite
         if (lastDirection == Action.WALKING_RIGHT) {
-            Zone hitbox = new Zone(partie.getContext(), posX + tailleX, posY, (int) range, tailleY);
+            hitbox = new Zone(partie.getContext(), posX + tailleX, posY, (int) range, tailleY);
             hitbox.draw(canvas);
 
-            if (Movable.areTouching(hitbox, partie.getJoueur())) {
+            if (Movable.areTouching(hitbox, partie.getJoueur(), false)) {
                 System.out.println("aie..");
                 partie.getJoueur().damage(degatsAttaque);
             }
         }
         // Hitbox à gauche
         else {
-            Zone hitbox = new Zone(partie.getContext(), posX - range, posY, (int) range, tailleY);
-            if (Movable.areTouching(hitbox, partie.getJoueur())) {
+            hitbox = new Zone(partie.getContext(), posX - range, posY, (int) range, tailleY);
+            if (Movable.areTouching(hitbox, partie.getJoueur(), false)) {
                 System.out.println("aie..");
                 partie.getJoueur().damage(degatsAttaque);
             }
@@ -82,12 +86,14 @@ public class Loup extends Mob{
                     break;
 
                 case WALKING_RIGHT:
+                case WALKING_RIGHT_BACKWARD:
                     posX += 2;
                     timeCentiBetweenFrame = 20;
                     currentCentiFrame = currentCentiFrame % (animations.get(1).size() * timeCentiBetweenFrame);
                     break;
 
                 case WALKING_LEFT:
+                case WALKING_LEFT_BACKWARD:
                     posX -= 2;
                     timeCentiBetweenFrame = 20;
                     currentCentiFrame = currentCentiFrame % (animations.get(1).size() * timeCentiBetweenFrame);
@@ -143,16 +149,29 @@ public class Loup extends Mob{
         // Si le joueur est dans la zone de détection
         if (currentAttackCd > 0) { // Si le loup est en cooldown
             if (isAtTheRightOf(partie.getJoueur())) {
-                action = Action.WALKING_RIGHT; // S'éloigner vers la droite
-                lastDirection = Action.WALKING_RIGHT;
+                if(distanceX < preferedRange) {
+                    action = Action.WALKING_RIGHT_BACKWARD; // S'éloigner vers la droite
+                    lastDirection = Action.WALKING_LEFT;
+                }
+                else{
+                    action = Action.WALKING_LEFT; // S'éloigner vers la droite
+                    lastDirection = Action.WALKING_RIGHT;
+                }
             } else if (!isAtTheRightOf(partie.getJoueur())) {
-                action = Action.WALKING_LEFT; // S'éloigner vers la gauche
-                lastDirection = Action.WALKING_LEFT;
+                if(distanceX < preferedRange) {
+                    action = Action.WALKING_LEFT_BACKWARD; // S'éloigner vers la gauche
+                    lastDirection = Action.WALKING_RIGHT;
+                } else if(distanceX > preferedRange + 10) {
+                    action = Action.WALKING_RIGHT; // S'éloigner vers la gauche
+                    lastDirection = Action.WALKING_RIGHT;
+                } else{
+                    action = Action.IDLE;
+                }
             }
         } else { // Si le loup n'est pas en cooldown
-            if (distanceX <= range) { // Si le joueur est dans la portée d'attaque
+            if (distanceX <= range-partie.getJoueur().getTailleX()/2) { // Si le joueur est dans la portée d'attaque
                 if(action != Action.ATTACKING) currentCentiFrame = 0;
-                action = Action.ATTACKING; // Attaquer
+                action = Action.ATTACKING;
             } else { // Si le joueur est détecté mais pas encore dans la portée
                 if (isAtTheRightOf(partie.getJoueur())) {
                     lastDirection = Action.WALKING_LEFT;
@@ -170,10 +189,20 @@ public class Loup extends Mob{
     @Override
     public void draw(Canvas canvas) {
         this.canvas = canvas;
+        //if(hitbox!=null) hitbox.draw(canvas);
+        Paint rouge = new Paint();
+        rouge.setColor(Color.RED);
+        Paint blanc = new Paint();
+        blanc.setColor(Color.WHITE);
+        canvas.drawRect((float)posX, (float) ((float)posY-MainActivity.pourcentHauteur(1.5)), (float)posX+tailleX, (float)posY, blanc);
+        canvas.drawRect((float)posX, (float) ((float)posY-MainActivity.pourcentHauteur(1.5)), (float) ((float)posX+(tailleX*((getHp()+0.0)/(getMaxHp()+0.0)))), (float)posY, rouge);
+
         // Dessiner le joueur en fonction de son action et sa direction
         switch (action) {
             case WALKING_RIGHT:
             case WALKING_LEFT:
+            case WALKING_LEFT_BACKWARD:
+            case WALKING_RIGHT_BACKWARD:
                 switch (lastDirection) {
                     case WALKING_RIGHT:
                         canvas.drawBitmap(

@@ -23,7 +23,7 @@ public abstract class Movable implements Cloneable{
     protected boolean isAnimating;
     protected int timeCentiBetweenFrame;
     protected int currentCentiFrame;
-    private ArrayList<Bitmap> images = new ArrayList<Bitmap>();
+    protected ArrayList<Bitmap> images = new ArrayList<Bitmap>();
 
     /*
     Constructor
@@ -144,24 +144,38 @@ public abstract class Movable implements Cloneable{
     /*
     Check if the to movables are touching
      */
-    public static boolean areTouching(Movable m1, Movable m2) {
-        // Définition des coordonnées des coins des deux rectangles avec enfoncement
-        double m1Left = m1.getPosX() + m1.enfoncementLeft;
-        double m1Right = m1.getPosX() + m1.getTailleX() - m1.enfoncementRight;
-        double m1Top = m1.getPosY() + m1.enfoncementTop;
-        double m1Bottom = m1.getPosY() + m1.getTailleY() - m1.enfoncementBottom;
+    public static boolean areTouching(Movable m1, Movable m2, boolean usingEnfoncement) {
+        double m1Left, m1Right, m1Top, m1Bottom;
+        double m2Left, m2Right, m2Top, m2Bottom;
 
-        double m2Left = m2.getPosX() + m2.enfoncementLeft;
-        double m2Right = m2.getPosX() + m2.getTailleX() - m2.enfoncementRight;
-        double m2Top = m2.getPosY() + m2.enfoncementTop;
-        double m2Bottom = m2.getPosY() + m2.getTailleY() - m2.enfoncementBottom;
+        if (usingEnfoncement) {
+            m1Left = m1.getPosX() + m1.enfoncementLeft;
+            m1Right = m1.getPosX() + m1.getTailleX() - m1.enfoncementRight;
+            m1Top = m1.getPosY() + m1.enfoncementTop;
+            m1Bottom = m1.getPosY() + m1.getTailleY() - m1.enfoncementBottom;
 
-        // Vérifier si les deux rectangles se touchent ou se chevauchent en tenant compte des enfoncements
-        return !(m1Right <= m2Left || // m1 est à gauche de m2
-                m1Left >= m2Right || // m1 est à droite de m2
-                m1Bottom <= m2Top || // m1 est au-dessus de m2
-                m1Top >= m2Bottom); // m1 est en dessous de m2
+            m2Left = m2.getPosX() + m2.enfoncementLeft;
+            m2Right = m2.getPosX() + m2.getTailleX() - m2.enfoncementRight;
+            m2Top = m2.getPosY() + m2.enfoncementTop;
+            m2Bottom = m2.getPosY() + m2.getTailleY() - m2.enfoncementBottom;
+        } else {
+            m1Left = m1.getPosX();
+            m1Right = m1.getPosX() + m1.getTailleX();
+            m1Top = m1.getPosY();
+            m1Bottom = m1.getPosY() + m1.getTailleY();
+
+            m2Left = m2.getPosX();
+            m2Right = m2.getPosX() + m2.getTailleX();
+            m2Top = m2.getPosY();
+            m2Bottom = m2.getPosY() + m2.getTailleY();
+        }
+
+        return !(m1Right <= m2Left ||
+                m1Left >= m2Right ||
+                m1Bottom <= m2Top ||
+                m1Top >= m2Bottom);
     }
+
 
 
     /*
@@ -169,7 +183,7 @@ public abstract class Movable implements Cloneable{
      */
     public static Movable isOneTouching(Movable m1, ArrayList<? extends Movable> m2){
         for(Movable m: m2){
-            if(areTouching(m1, m)) return m;
+            if(areTouching(m1, m, true)) return m;
         }
         return null;
     }
@@ -185,7 +199,7 @@ public abstract class Movable implements Cloneable{
         nextMov.posY += y;
 
         for(Movable m: m2) {
-            if(areTouching(nextMov, m)) {
+            if(areTouching(nextMov, m, true)) {
                 touchingMovables.add(m);
             }
         }

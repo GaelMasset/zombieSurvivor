@@ -3,6 +3,7 @@ package com.example.zombiesurvivor.Base;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -57,6 +58,7 @@ public class Page extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
 
     }
+
 
     public Fenetre getFenetre(){
         return this.fenetre;
