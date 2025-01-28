@@ -6,7 +6,6 @@ public abstract class Destroyable extends Movable{
     private int hp;
     private final int maxHp;
 
-    private Game partie;
     public Destroyable(Context context, double posX,
                        double posY, int tailleX, int tailleY,
                        String cheminImages, boolean isAnimating,
@@ -27,7 +26,7 @@ public abstract class Destroyable extends Movable{
         }
     }
     public void destroy(){
-        partie.getCarte().getObstacles().remove(this);
+        Game.getPartie().getCarte().getObstacles().remove(this);
     }
     public int getHp(){
         return hp;
@@ -35,10 +34,6 @@ public abstract class Destroyable extends Movable{
     public int getMaxHp() {
         return maxHp;
     }
-    public void setPartie(Game partie){
-        this.partie = partie;
-    }
-
     public void soigner(int soin) {
         this.hp += soin;
         if(hp > maxHp) hp = maxHp;

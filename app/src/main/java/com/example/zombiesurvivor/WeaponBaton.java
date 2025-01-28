@@ -15,9 +15,9 @@ public class WeaponBaton extends Item {
     }
 
     @Override
-    public boolean use(Game game) {
-        super.use(game);
-        return hit(game);
+    public boolean use() {
+        super.use();
+        return hit();
     }
 
     @Override
@@ -28,22 +28,22 @@ public class WeaponBaton extends Item {
     }
 
     //CHANGE OBSTACLES PAR ENEMIES ?
-    private boolean hit(Game game) {
+    private boolean hit() {
         Movable hitZone;
-        if (game.getJoueur().getLastDirection() == Action.WALKING_RIGHT) {
+        if (Game.getPartie().getJoueur().getLastDirection() == Action.WALKING_RIGHT) {
              hitZone = new Zone(context,
-                     game.getJoueur().posX+game.getJoueur().tailleX,
-                     game.getJoueur().posY,
+                     Game.getPartie().getJoueur().posX+Game.getPartie().getJoueur().tailleX,
+                     Game.getPartie().getJoueur().posY,
                      this.attackrange,
-                     game.getJoueur().tailleY);
+                     Game.getPartie().getJoueur().tailleY);
         } else {
             hitZone = new Zone(context,
-                    game.getJoueur().posX-attackrange,
-                    game.getJoueur().posY,
-                    (int) game.getJoueur().posX,
-                    game.getJoueur().tailleY);
+                    Game.getPartie().getJoueur().posX-attackrange,
+                    Game.getPartie().getJoueur().posY,
+                    (int) Game.getPartie().getJoueur().posX,
+                    Game.getPartie().getJoueur().tailleY);
         }
-        Movable target = Movable.isOneTouching(hitZone, game.getMobs());
+        Movable target = Movable.isOneTouching(hitZone, Game.getPartie().getMobs());
         if (target != null) {
             if (target instanceof Destroyable) {
                 ((Destroyable) target).damage(this.degats);

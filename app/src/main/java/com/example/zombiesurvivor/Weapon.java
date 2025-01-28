@@ -42,7 +42,7 @@ public class Weapon extends Item{
             Bullet newBullet;
             double angle;
 
-            if (partie.getJoueur().getLastDirection() == Action.WALKING_RIGHT) {
+            if (Game.getPartie().getJoueur().getLastDirection() == Action.WALKING_RIGHT) {
                 angle = 0; // Angle pour aller à droite
                 newBullet = new Bullet(munitionType, angle, this.munitionType.getRange());
                 newBullet.setWeapon(this);
@@ -54,10 +54,10 @@ public class Weapon extends Item{
 
 
 
-            newBullet.setPosX(partie.getJoueur().posX + (double) partie.getJoueur().tailleX / 2);
-            newBullet.setPosY(partie.getJoueur().posY + (double) partie.getJoueur().tailleY / 2);
+            newBullet.setPosX(Game.getPartie().getJoueur().posX + (double) Game.getPartie().getJoueur().tailleX / 2);
+            newBullet.setPosY(Game.getPartie().getJoueur().posY + (double) Game.getPartie().getJoueur().tailleY / 2);
 
-            partie.getBalles().add(newBullet);
+            Game.getPartie().getBalles().add(newBullet);
 
             lastFireTime = currentTime;
 
@@ -75,14 +75,11 @@ public class Weapon extends Item{
         }
     }
 
-    public Game getGame(){
-        return partie;
-    }
 
 
     @Override
-    public boolean use(Game game) {
-        super.use(game);
+    public boolean use() {
+        super.use();
         return fire();
     }
 }

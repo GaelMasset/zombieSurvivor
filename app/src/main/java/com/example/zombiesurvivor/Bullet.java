@@ -39,7 +39,7 @@ public class Bullet extends Movable {
 
         setPosX(getPosX() + dx);
         setPosY(getPosY() + dy);
-        Movable m = Movable.isOneTouching(this, weapon.getGame().getMobs());
+        Movable m = Movable.isOneTouching(this, Game.getPartie().getMobs());
 
         if(m!=null){
             hit(m);
@@ -47,7 +47,7 @@ public class Bullet extends Movable {
 
         // Fix: Use absolute values when calculating range reduction to handle negative velocities
         range -= Math.sqrt(dx*dx + dy*dy);
-        if(range<=0) weapon.getGame().getBalles().remove(this);
+        if(range<=0) Game.getPartie().getBalles().remove(this);
     }
 
     // Dessiner la balle sur le Canvas (si nécessaire)
@@ -79,7 +79,7 @@ public class Bullet extends Movable {
             System.out.println(((Destroyable) m).getHp());
             ((Destroyable) m).damage(this.damage);
             System.out.println(((Destroyable) m).getHp());
-            weapon.getGame().getBalles().remove(this);
+            Game.getPartie().getBalles().remove(this);
         }
     }
 

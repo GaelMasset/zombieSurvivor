@@ -4,16 +4,16 @@ import static com.example.zombiesurvivor.Base.MainActivity.canvasHeight;
 import static com.example.zombiesurvivor.Base.MainActivity.canvasWidth;
 
 public class CameraPlayer extends Camera{
-    public CameraPlayer(Game partie) {
-        super(partie);
+    public CameraPlayer() {
+        super();
     }
 
     @Override
     public void update() {
         {
-            posX = partie.getJoueur().posX - (canvasWidth / 2.0);
+            posX = Game.getPartie().getJoueur().posX - (canvasWidth / 2.0);
 
-            posY = -partie.getJoueur().posY + (canvasHeight/2.0);
+            posY = -Game.getPartie().getJoueur().posY + (canvasHeight/2.0);
         }
     }
 }

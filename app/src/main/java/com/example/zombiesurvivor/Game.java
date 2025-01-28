@@ -1,5 +1,6 @@
 package com.example.zombiesurvivor;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 
@@ -13,6 +14,19 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Game {
+    @SuppressLint("StaticFieldLeak")
+    private static Game partie;
+    public static void setContext(Context c){
+        partie.context = c;
+    }
+
+    public static Game getPartie(){
+        if(partie == null){
+            partie = new Game(null, null, null);
+        }
+        return partie;
+    }
+
     private Player joueur;
     private Image fond;
     private Map carte;
@@ -24,18 +38,9 @@ public class Game {
     private double yPlayerSpawn;
 
     public Game(Context context, Player joueur, Map carte) {
-        this.joueur = joueur;
-        this.carte = carte;
-        this.carte.setContext(context);
-        this.camera = new CameraPlayer(this);
-        this.context = context;
-        joueur.setGame(this);
+        this.camera = new CameraPlayer();
 
-        fond = new Image(context, 0, 0, MainActivity.canvasWidth, MainActivity.canvasHeight,"example_background" , 80);
-        Random r = new Random();
-        int solPif = r.nextInt(carte.getFloors().size());
-        xPlayerSpawn = carte.getFloors().get(solPif).posX+ (double) carte.getFloors().get(solPif).tailleX /2;
-        yPlayerSpawn = carte.getFloors().get(solPif).posY+ (double) carte.getFloors().get(solPif).tailleY /2;
+
     }
 
     public void draw(Canvas canvas){
@@ -64,7 +69,7 @@ public class Game {
     }
 
     public void addMonster(){
-        this.zombies.add(new Loup(context, 2500, 3000, 63, 66, "monster_wolf", 0, 0, 0, 0, true, 50, 50, 50, 0.2, this, 30, 100));
+        this.zombies.add(new Loup(context, 2500, 3000, 63, 66, "monster_wolf", 0, 0, 0, 0, true, 50, 50, 50, 0.2, 30, 100));
     }
 
     public Player getJoueur(){
@@ -94,5 +99,18 @@ public class Game {
 
     public Image getFond() {
         return fond;
+    }
+
+    public void setFond(Image fond) {
+        this.fond = fond;
+    }
+
+    public void setJoueur(Player joueur) {
+        this.joueur = joueur;
+    }
+
+    public void setCarte(Map carte) {
+        this.carte = carte;
+        this.carte.setContext(context);
     }
 }

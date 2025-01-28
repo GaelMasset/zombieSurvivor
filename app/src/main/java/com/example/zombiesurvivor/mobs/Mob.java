@@ -11,7 +11,6 @@ import com.example.zombiesurvivor.Movable;
 import java.util.ArrayList;
 
 public abstract class Mob extends Destroyable {
-    protected Game partie;
     protected Action action = Action.IDLE;
     protected Action lastDirection = Action.WALKING_RIGHT;
     protected ArrayList<ArrayList<Bitmap>> animations = new ArrayList<ArrayList<Bitmap>>();
@@ -23,10 +22,9 @@ public abstract class Mob extends Destroyable {
                double enfoncementTop, double enfoncementBottom,
                double enfoncementLeft, double enfoncementRight,
                boolean isAnimating, int timeCentiBetweenFrame, int hp, int maxHp,
-               double speed, Game partie) {
+               double speed) {
         super(context, posX, posY, tailleX, tailleY, cheminImages, isAnimating, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight, timeCentiBetweenFrame, hp, maxHp);
         this.speed = speed;
-        this.partie = partie;
 
         int slot = 0;
         for(String animation: getAnimations()) {

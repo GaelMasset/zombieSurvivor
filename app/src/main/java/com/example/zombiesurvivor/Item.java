@@ -18,9 +18,6 @@ public abstract class Item extends Movable{
     private Bitmap icone;
     private ArrayList<ArrayList<Bitmap>> animationsItem = new ArrayList<ArrayList<Bitmap>>();
 
-    protected Game partie;
-
-
     public Item(Context context, double posX, double posY, int tailleX, int tailleY, String cheminImages, boolean isAnimating, int timeCentiBetweenFrame,int postUseAnimTime ,double enfoncementTop, double enfoncementBottom, double enfoncementLeft, double enfoncementRight, int timeCentiToUse, boolean isStackable, int tailleStack) {
         super(context, posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight);
         this.timeCentiToUse = timeCentiToUse;
@@ -58,9 +55,6 @@ public abstract class Item extends Movable{
             slot++;
         }
     }
-    public void setGame(Game partie){
-        this.partie = partie;
-    }
 
     protected String[] getAnimations() {
         return new String[]{
@@ -68,7 +62,7 @@ public abstract class Item extends Movable{
         };
     }
 
-    public boolean use(Game game){
+    public boolean use(){
         System.out.println("UTILISATION");
         used=true;
         return true;
@@ -76,7 +70,7 @@ public abstract class Item extends Movable{
     public void update(){
         if(!animationOver()) currentUseTimer--;
         if(canUse()){
-            use(this.partie);
+            use();
         }
     }
 

@@ -18,9 +18,9 @@ public class PotionSoin extends Item{
     }
 
     @Override
-    public boolean use(Game partie){
-        super.use(partie);
-        partie.getJoueur().soigner(soin);
+    public boolean use(){
+        super.use();
+        Game.getPartie().getJoueur().soigner(soin);
         return false;
     }
 }

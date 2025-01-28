@@ -30,8 +30,8 @@ public class Player extends Mob {
 
 
     public Player(Context context, int posX, int posY, int tailleX, int tailleY, String floor, int maxHp,double enfoncementTop, double enfoncementBottom,
-                  double enfoncementLeft, double enfoncementRight, boolean isAnimating, int timeCentiBetweenFrame, int hp, int manaMax, double speed, Joystick joystickDeplacement, Bouton joystickAttaque, Game partie) {
-        super(context, posX, posY, tailleX, tailleY, floor,enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight, isAnimating, timeCentiBetweenFrame, hp , maxHp, speed, partie);
+                  double enfoncementLeft, double enfoncementRight, boolean isAnimating, int timeCentiBetweenFrame, int hp, int manaMax, double speed, Joystick joystickDeplacement, Bouton joystickAttaque) {
+        super(context, posX, posY, tailleX, tailleY, floor,enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight, isAnimating, timeCentiBetweenFrame, hp , maxHp, speed);
         this.joyStickDeplacement = joystickDeplacement;
         this.joyStickArme = joystickAttaque;
         this.maxMana = manaMax;
@@ -55,7 +55,7 @@ public class Player extends Mob {
         }
 
 
-            ArrayList<Movable> obstacles = getAllGonnaTouchMovables(this, partie.getCarte().getObstacles(),
+            ArrayList<Movable> obstacles = getAllGonnaTouchMovables(this, Game.getPartie().getCarte().getObstacles(),
                     joyStickDeplacement.actuatorX * speed, joyStickDeplacement.getActuatorY() * speed);
 
             if (obstacles.isEmpty()) {
@@ -63,10 +63,10 @@ public class Player extends Mob {
                 posY = futurePosY;
                 return true;
             } else {
-                ArrayList<Movable> xObstacles = getAllGonnaTouchMovables(this, partie.getCarte().getObstacles(),
+                ArrayList<Movable> xObstacles = getAllGonnaTouchMovables(this, Game.getPartie().getCarte().getObstacles(),
                         joyStickDeplacement.actuatorX * speed, 0);
 
-                ArrayList<Movable> yObstacles = getAllGonnaTouchMovables(this, partie.getCarte().getObstacles(),
+                ArrayList<Movable> yObstacles = getAllGonnaTouchMovables(this, Game.getPartie().getCarte().getObstacles(),
                         0, joyStickDeplacement.getActuatorY() * speed);
 
                 double deltaX = 0;
@@ -336,10 +336,6 @@ public class Player extends Mob {
     public void damage(int hp){
         super.damage(hp);
         System.out.println("OUIIILLLLLEELELLELELE");
-    }
-
-    public void setGame(Game game) {
-        this.partie = game;
     }
 
     public Bouton getJoystickAttaque() {

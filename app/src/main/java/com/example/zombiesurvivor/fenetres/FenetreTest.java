@@ -5,12 +5,14 @@ import static com.example.zombiesurvivor.Base.MainActivity.*;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
+import com.example.zombiesurvivor.Base.MainActivity;
 import com.example.zombiesurvivor.Base.Page;
 import com.example.zombiesurvivor.Bouton;
 import com.example.zombiesurvivor.Bow;
 import com.example.zombiesurvivor.Bullet;
 import com.example.zombiesurvivor.Floor;
 import com.example.zombiesurvivor.Game;
+import com.example.zombiesurvivor.Image;
 import com.example.zombiesurvivor.ImageHealthBar;
 import com.example.zombiesurvivor.ImageHotbar;
 import com.example.zombiesurvivor.ImageManaBar;
@@ -24,7 +26,6 @@ import com.example.zombiesurvivor.PotionSoin;
 import com.example.zombiesurvivor.WeaponBaton;
 
 public class FenetreTest extends Fenetre {
-    Game partie;
     Floor sol;
     Obstacle o;
     Joystick joystickDeplacement;
@@ -35,9 +36,23 @@ public class FenetreTest extends Fenetre {
     PixelText texteChalut;
     public FenetreTest(Page p) {
         super(p);
-        Map c = GenerateurNiveau.genererCarte(page.getContext());
+
         joystickDeplacement = new Joystick(p.getContext(), pourcentLongueur(15) ,canvasHeight-pourcentHauteur(26), pourcentLongueur(6), pourcentLongueur(4), "joystick_bottom_1", "joystick_top_1");
         boutonAttaque = new Bouton(p.getContext(), canvasWidth-pourcentLongueur(15) ,canvasHeight-pourcentHauteur(26), pourcentLongueur(8), pourcentLongueur(8), "joystick_bottom_","joystick_bottom_", false, 100);
+
+
+        //Initailise game
+        Game.getPartie();
+
+        Map c = GenerateurNiveau.genererCarte(page.getContext());
+        Game.getPartie().setCarte(c);
+        Game.getPartie().setJoueur(new Player(page.getContext(), 3000, 3000, 80, 96,
+                "character",100, 79,0,0,0, true, 100, 50,100, 5,
+                joystickDeplacement, boutonAttaque));
+        Game.setContext(p.getContext());
+        Game.getPartie().setFond(new Image(Game.getPartie().getContext(), 0, 0, MainActivity.canvasWidth, MainActivity.canvasHeight,"example_background" , 80));
+
+
 
         Bow arme = new Bow(page.getContext(), 0, 0, 80, 96, "item_bow", false, 100,0,0, 0, 0, 0,95, 120,
                 new Bullet(p.getContext(),0, 0, 36, 20, "pistol_bullet", false, 100,0,0,0,0, 5, 10, 0, 2000),1, 100);
@@ -45,24 +60,19 @@ public class FenetreTest extends Fenetre {
         PotionSoin pot = new PotionSoin(page.getContext(), 0, 0, 80, 96, "item_potion", false, 100,0 , 0, 0, 0, 0, 250, 100);
 
         WeaponBaton armeMelee = new WeaponBaton(page.getContext(), 0, 0, 80, 96, "item_sword1", false, 20,60, 0, 0, 0, 0, 40, 10, 150);
-        partie = new Game(page.getContext(), new Player(page.getContext(), 3000, 3000, 80, 96,
-                    "character",100, 79,0,0,0, true, 100, 50,100, 5,
-                    joystickDeplacement, boutonAttaque, partie), c);
-        partie.getJoueur().getHotbar().add(pot,1);
-        partie.getJoueur().getHotbar().add(arme,1);
-        partie.getJoueur().getHotbar().add(armeMelee, 1);
 
-        partie.getJoueur().setSpawnPoint(partie.getxPlayerSpawn(), partie.getyPlayerSpawn());
+
+        Game.getPartie().getJoueur().getHotbar().add(pot,1);
+        Game.getPartie().getJoueur().getHotbar().add(arme,1);
+        Game.getPartie().getJoueur().getHotbar().add(armeMelee, 1);
+
+        Game.getPartie().getJoueur().setSpawnPoint(Game.getPartie().getxPlayerSpawn(), Game.getPartie().getyPlayerSpawn());
         //partie.getJoueur().setSpawnPoint(2800, 2800);
-        arme.setGame(partie);
-        pot.setGame(partie);
-        c.setGame(partie);
-        partie.addMonster();
-        armeMelee.setGame(partie);
+        Game.getPartie().addMonster();
 
 
-        healthBar = new ImageHealthBar(page.getContext(), pourcentLongueur(2.33), pourcentHauteur(2.66), (int) pourcentLongueur(22.33), (int) pourcentHauteur(17.33), "healthbar", 100, partie.getJoueur());
-        manaBar = new ImageManaBar(page.getContext(), pourcentLongueur(1.33), (double) pourcentHauteur(15.66), (int) pourcentLongueur(22.33), (int) pourcentHauteur(17.33), "manabar", 100, partie.getJoueur());
+        healthBar = new ImageHealthBar(page.getContext(), pourcentLongueur(2.33), pourcentHauteur(2.66), (int) pourcentLongueur(22.33), (int) pourcentHauteur(17.33), "healthbar", 100);
+        manaBar = new ImageManaBar(page.getContext(), pourcentLongueur(1.33), (double) pourcentHauteur(15.66), (int) pourcentLongueur(22.33), (int) pourcentHauteur(17.33), "manabar", 100);
 
         hotbar[0] = new ImageHotbar(page.getContext(),pourcentLongueur(34.33) , pourcentHauteur(80.66), (int) pourcentLongueur(7.33),(int) pourcentHauteur(14.66),"hotbar", 100);
         hotbar[1] = new ImageHotbar(page.getContext(),pourcentLongueur(42.33) , pourcentHauteur(80.66), (int) pourcentLongueur(7.33),(int) pourcentHauteur(14.66),"hotbar", 100);
@@ -76,7 +86,7 @@ public class FenetreTest extends Fenetre {
 
     @Override
     public void update() {
-        partie.update();
+        Game.getPartie().update();
         joystickDeplacement.update();
         boutonAttaque.update();
 
@@ -85,15 +95,15 @@ public class FenetreTest extends Fenetre {
     @Override
     public void draw(Canvas canvas) {
         canvas.save();
-        partie.getFond().draw(canvas);
+        Game.getPartie().getFond().draw(canvas);
 
         canvas.scale(facteurZoom, facteurZoom);
         float translateX = (screenWidth * (1 - facteurZoom)) / (2 * facteurZoom);
         float translateY = (screenHeight * (1 - facteurZoom)) / (2 * facteurZoom);
         canvas.translate(translateX, translateY);
-        partie.draw(canvas);
+        Game.getPartie().draw(canvas);
         canvas.restore();
-        partie.getCarte().drawMinMap(canvas, (int) pourcentLongueur(259.0/3), (int) pourcentHauteur(8.0/1.5), (int) pourcentLongueur(289.0/3), (int) pourcentHauteur(38.0/1.5));
+        Game.getPartie().getCarte().drawMinMap(canvas, (int) pourcentLongueur(259.0/3), (int) pourcentHauteur(8.0/1.5), (int) pourcentLongueur(289.0/3), (int) pourcentHauteur(38.0/1.5));
 
         joystickDeplacement.draw(canvas);
         boutonAttaque.draw(canvas);
@@ -103,8 +113,8 @@ public class FenetreTest extends Fenetre {
         manaBar.draw(canvas);
         for(int i = 0; i < hotbar.length; i++) {
             hotbar[i].draw(canvas);
-            if (partie.getJoueur().getHotbar().get(i) != null) {
-                partie.getJoueur().getHotbar().get(i).getItem().drawIcone(canvas, hotbar[i].getPosX(), hotbar[i].getPosY(), hotbar[i].getTailleX(), hotbar[i].getTailleY());
+            if (Game.getPartie().getJoueur().getHotbar().get(i) != null) {
+                Game.getPartie().getJoueur().getHotbar().get(i).getItem().drawIcone(canvas, hotbar[i].getPosX(), hotbar[i].getPosY(), hotbar[i].getTailleX(), hotbar[i].getTailleY());
             }
         }
     }
@@ -129,12 +139,12 @@ public class FenetreTest extends Fenetre {
                     }
                     if(boutonAttaque.isPressed(xClicked, yClicked)){
                         boutonAttaque.setIsPressed(true);
-                        partie.getJoueur().useItem();
+                        Game.getPartie().getJoueur().useItem();
                     }
                     for(int barre = 0; barre < hotbar.length; barre++){
                         if(hotbar[barre].isTouched(xClicked, yClicked)){
                             hotbar[barre].select();
-                            partie.getJoueur().getHotbar().setSelectedSlot(barre);
+                            Game.getPartie().getJoueur().getHotbar().setSelectedSlot(barre);
                         }
                     }
                     break;

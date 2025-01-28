@@ -8,16 +8,17 @@ import android.graphics.Paint;
 import com.example.zombiesurvivor.Floor;
 import com.example.zombiesurvivor.Game;
 import com.example.zombiesurvivor.Image;
+import com.example.zombiesurvivor.Movable;
 import com.example.zombiesurvivor.Obstacle;
 
 import java.util.ArrayList;
 
 public class Map {
-    private TypeTile[][] map;
+    private TypeTile[][] typeTiles;
+    private Movable[][] objetsCarte;
     private ArrayList<Obstacle> obstacles;
     private ArrayList<Floor> sols;
     private Context context;
-    private Game partie;
 
     public Map(ArrayList<Obstacle> obstacles, ArrayList<Floor> floors){
         this.obstacles = obstacles;
@@ -26,22 +27,22 @@ public class Map {
 
 
     public void drawMinMap(Canvas canvas, int left, int top, int right, int bottom) {
-        if (map == null || map.length == 0 || map[0].length == 0) {
+        if (typeTiles == null || typeTiles.length == 0 || typeTiles[0].length == 0) {
             return; // Vérifie que la carte n'est pas vide ou nulle
         }
 
         // Création et dessin du HUD
-        Image hud = new Image(context, left, top, right - left, bottom - top, "map_hud", 80);
+        Image hud = new Image(Game.getPartie().getContext(), left, top, right - left, bottom - top, "map_hud", 80);
         // Appliquer une marge de 30 pixels pour ajuster les dimensions de la minimap
-        System.out.println((right-left)/map.length);
+        System.out.println((right-left)/ typeTiles.length);
         left += 30;
         right -= 30;
         top += 30;
         bottom -= 30;
 
         // Dimensions de la carte
-        int longueur = map.length;  // Nombre de colonnes
-        int hauteur = map[0].length; // Nombre de lignes
+        int longueur = typeTiles.length;  // Nombre de colonnes
+        int hauteur = typeTiles[0].length; // Nombre de lignes
 
         // Calcul des dimensions de chaque case
         float longueurCase = (float) (((double) right - left) / longueur);
@@ -54,7 +55,7 @@ public class Map {
         // Parcourir la carte et dessiner les cases
         for (int i = 0; i < hauteur; i++) {
             for (int j = 0; j < longueur; j++) {
-                TypeTile tile = map[j][i]; // Accéder à la tuile actuelle
+                TypeTile tile = typeTiles[j][i]; // Accéder à la tuile actuelle
 
                 // Définir une couleur différente selon le type de tuile
                 switch (tile) {
@@ -84,8 +85,8 @@ public class Map {
         }
 
         // Dessiner la position du joueur sur la minimap
-        double joueurPosX = partie.getJoueur().getPosX() / GenerateurNiveau.TAILLE_CASE;
-        double joueurPosY = partie.getJoueur().getPosY() / GenerateurNiveau.TAILLE_CASE;
+        double joueurPosX = Game.getPartie().getJoueur().getPosX() / GenerateurNiveau.TAILLE_CASE;
+        double joueurPosY = Game.getPartie().getJoueur().getPosY() / GenerateurNiveau.TAILLE_CASE;
 
         if (joueurPosX >= 0 && joueurPosX < longueur && joueurPosY >= 0 && joueurPosY < hauteur) {
             paint.setColor(Color.RED); // Rouge pour le joueur
@@ -128,18 +129,14 @@ public class Map {
     }
 
     public TypeTile[][] getMap() {
-        return map;
+        return typeTiles;
     }
 
     public void setMap(TypeTile[][] map) {
-        this.map = map;
+        this.typeTiles = map;
     }
 
     public void setContext(Context context) {
         this.context = context;
-    }
-
-    public void setGame(Game partie){
-        this.partie = partie;
     }
 }

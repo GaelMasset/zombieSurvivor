@@ -7,9 +7,9 @@ import com.example.zombiesurvivor.mobs.Player;
 
 public class ImageManaBar extends Image{
     protected Player joueur;
-    public ImageManaBar(Context context, double posX, double posY, int tailleX, int tailleY, String cheminImages, int timeCentiBetweenFrame, Player joueur) {
+    public ImageManaBar(Context context, double posX, double posY, int tailleX, int tailleY, String cheminImages, int timeCentiBetweenFrame) {
         super(context, posX, posY, tailleX, tailleY, cheminImages, timeCentiBetweenFrame);
-        this.joueur = joueur;
+        this.joueur = Game.getPartie().getJoueur();
 
     }
 

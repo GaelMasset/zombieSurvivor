@@ -7,7 +7,7 @@ import android.graphics.Paint;
 public class Zone extends Movable{
 
     public Zone(Context context, double posX, double posY, int tailleX, int tailleY) {
-        super(context, posX, posY, tailleX, tailleY, "vide", false, 100, 0, 0, 0, 00);
+        super(context, posX, posY, tailleX, tailleY, "vide", false, 100, 0, 0, 0, 0);
     }
 
     @Override
