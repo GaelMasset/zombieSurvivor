@@ -3,10 +3,8 @@ package com.example.zombiesurvivor.fenetres;
 import static com.example.zombiesurvivor.Base.MainActivity.*;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.view.MotionEvent;
 
-import com.example.zombiesurvivor.Base.MainActivity;
 import com.example.zombiesurvivor.Base.Page;
 import com.example.zombiesurvivor.Bouton;
 import com.example.zombiesurvivor.Bow;
@@ -54,10 +52,11 @@ public class FenetreTest extends Fenetre {
         partie.getJoueur().getHotbar().add(arme,1);
         partie.getJoueur().getHotbar().add(armeMelee, 1);
 
-        //partie.getJoueur().setSpawnPoint(partie.getxPlayerSpawn(), partie.getyPlayerSpawn());
-        partie.getJoueur().setSpawnPoint(2500, 2500);
+        partie.getJoueur().setSpawnPoint(partie.getxPlayerSpawn(), partie.getyPlayerSpawn());
+        //partie.getJoueur().setSpawnPoint(2800, 2800);
         arme.setGame(partie);
         pot.setGame(partie);
+        c.setGame(partie);
         partie.addMonster();
         armeMelee.setGame(partie);
 
@@ -94,7 +93,8 @@ public class FenetreTest extends Fenetre {
         canvas.translate(translateX, translateY);
         partie.draw(canvas);
         canvas.restore();
-        partie.getCarte().drawMinMap(canvas, (int) pourcentLongueur(259.0/3), (int) pourcentHauteur(8.0/1.5), (int) pourcentLongueur(287.0/3), (int) pourcentHauteur(38.0/1.5));
+        partie.getCarte().drawMinMap(canvas, (int) pourcentLongueur(259.0/3), (int) pourcentHauteur(8.0/1.5), (int) pourcentLongueur(289.0/3), (int) pourcentHauteur(38.0/1.5));
+
         joystickDeplacement.draw(canvas);
         boutonAttaque.draw(canvas);
 

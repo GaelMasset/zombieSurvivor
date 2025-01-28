@@ -11,13 +11,13 @@ import java.util.Random;
     public class GenerateurNiveau {
         private static final int LARGEUR_CARTE = 100;  // Largeur de la carte (100 tuiles)
         private static final int HAUTEUR_CARTE = 100;  // Hauteur de la carte (100 tuiles)
-        private static final int TAILLE_CASE = 100;
+        public static final int TAILLE_CASE = 100;
 
         // Paramètres du bruit de Perlin
-        private static final float SEUIL_EAU = 0.07f;  // Valeur en dessous de laquelle on a de l'eau
-        private static final float SEUIL_SOL = 0.07f;  // Valeur au-dessus de laquelle on a du sol
+        private static final float SEUIL_EAU = -0.1f;  // Valeur en dessous de laquelle on a de l'eau
+        private static final float SEUIL_SOL = -0.1f;  // Valeur au-dessus de laquelle on a du sol
         private static final float SEUIL_VERDDURE = 0.15f;
-        private static final float PERTURBATION = 0.03f;  // L'influence du bruit pour des variations douces
+        private static final float PERTURBATION = 0.05f;  // L'influence du bruit pour des variations douces
 
         private static PerlinNoise perlinNoise;
 
@@ -75,7 +75,8 @@ import java.util.Random;
 
             // Ajouter des murs autour des îles
             ajouterMurs(carte, context, obstacles, floors);
-            //ajouterDeco(carte, context, obstacles, floors);
+            String[] cheminsDeco = {"example_tile_deco_herbe", "example_tile_deco_fleur", "example_tile_deco_roche"};
+            ajouterDecorations(carte, context, obstacles, cheminsDeco);
 
             // Créer et retourner la carte avec les tuiles générées
             Map m = new Map(obstacles, floors);
@@ -169,5 +170,26 @@ import java.util.Random;
             }
         }
 
+        private static void ajouterDecorations(TypeTile[][] carte, Context context, ArrayList<Obstacle> decorations, String[] cheminsDeco) {
+            Random random = new Random();
+
+            for (int x = 0; x < LARGEUR_CARTE; x++) {
+                for (int y = 0; y < HAUTEUR_CARTE; y++) {
+                    // Vérifier si la case actuelle est du sol, car on ne veut pas mettre de déco sur de l'eau ou une bordure
+                    if (carte[x][y] == TypeTile.SOL) {
+                        // Générer un nombre aléatoire entre 0 et 99, 5% de chance d'ajouter une décoration
+                        if (random.nextInt(100) < 5) {
+                            // Choisir un chemin de décoration au hasard
+                            String cheminDeco = cheminsDeco[random.nextInt(cheminsDeco.length)];
+
+                            // Ajouter la décoration comme un obstacle
+                            int xPos = x * TAILLE_CASE;
+                            int yPos = y * TAILLE_CASE;
+                            decorations.add(new Obstacle(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0, cheminDeco, true, 100, 0, 0));
+                        }
+                    }
+                }
+            }
+        }
 
     }
