@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 
-import com.example.zombiesurvivor.Base.MainActivity;
 import com.example.zombiesurvivor.carte.Map;
 import com.example.zombiesurvivor.mobs.Loup;
 import com.example.zombiesurvivor.mobs.Mob;
@@ -31,16 +30,19 @@ public class Game {
     private Image fond;
     private Map carte;
     private Camera camera;
-    private ArrayList<Mob> zombies = new ArrayList<Mob>();
+    private ArrayList<Mob> mobs = new ArrayList<Mob>();
     private ArrayList<Bullet> balles = new ArrayList<Bullet>();
     private Context context;
+
+    private int randomSpawnPoint;
     private double xPlayerSpawn;
     private double yPlayerSpawn;
 
     public Game(Context context, Player joueur, Map carte) {
         this.camera = new CameraPlayer();
 
-
+        Random r = new Random();
+        randomSpawnPoint = r.nextInt(1000);
     }
 
     public void draw(Canvas canvas){
@@ -51,7 +53,7 @@ public class Game {
         for(Bullet balle: balles){
             balle.draw(canvas);
         }
-        for(Mob mobs: zombies){
+        for(Mob mobs: mobs){
             mobs.draw(canvas);
         }
     }
@@ -63,13 +65,13 @@ public class Game {
         for(int i = 0; i < balles.size(); i++){
             balles.get(i).update();
         }
-        for(Mob mobs: zombies){
+        for(Mob mobs: mobs){
             mobs.update();
         }
     }
 
     public void addMonster(){
-        this.zombies.add(new Loup(context, 2500, 3000, 63, 66, "monster_wolf", 0, 0, 0, 0, true, 50, 50, 50, 0.2, 30, 100));
+        this.mobs.add(new Loup(context, 2500, 3000, 63, 66, "monster_wolf", 0, 0, 0, 0, true, 50, 50, 50, 0.2, 30, 100));
     }
 
     public Player getJoueur(){
@@ -86,15 +88,15 @@ public class Game {
         return this.context;
     }
     public ArrayList<? extends Movable> getMobs() {
-        return zombies;
+        return mobs;
     }
 
     public double getxPlayerSpawn() {
-        return xPlayerSpawn;
+        return carte.getFloors().get(randomSpawnPoint%carte.getFloors().size()).posX;
     }
 
     public double getyPlayerSpawn() {
-        return yPlayerSpawn;
+        return carte.getFloors().get(randomSpawnPoint%carte.getFloors().size()).posY;
     }
 
     public Image getFond() {

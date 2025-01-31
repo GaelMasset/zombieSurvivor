@@ -48,6 +48,8 @@ public class Inventory {
     }
 
 
+
+
     public int getSelectedSlot() {
         return selectedSlot;
     }
@@ -56,5 +58,9 @@ public class Inventory {
     }
     public void setSelectedSlot(int slot){
         this.selectedSlot = slot;
+    }
+
+    public void set(int i, Stack tempo) {
+        stacks.set(i, tempo);
     }
 }

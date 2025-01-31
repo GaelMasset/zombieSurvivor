@@ -10,6 +10,7 @@ import com.example.zombiesurvivor.Game;
 import com.example.zombiesurvivor.Image;
 import com.example.zombiesurvivor.Movable;
 import com.example.zombiesurvivor.Obstacle;
+import com.example.zombiesurvivor.mobs.Mob;
 
 import java.util.ArrayList;
 
@@ -28,36 +29,22 @@ public class Map {
 
     public void drawMinMap(Canvas canvas, int left, int top, int right, int bottom) {
         if (typeTiles == null || typeTiles.length == 0 || typeTiles[0].length == 0) {
-            return; // Vérifie que la carte n'est pas vide ou nulle
+            return;
         }
 
-        // Création et dessin du HUD
-        Image hud = new Image(Game.getPartie().getContext(), left, top, right - left, bottom - top, "map_hud", 80);
-        // Appliquer une marge de 30 pixels pour ajuster les dimensions de la minimap
-        System.out.println((right-left)/ typeTiles.length);
-        left += 30;
-        right -= 30;
-        top += 30;
-        bottom -= 30;
+        int longueur = typeTiles.length;
+        int hauteur = typeTiles[0].length;
 
-        // Dimensions de la carte
-        int longueur = typeTiles.length;  // Nombre de colonnes
-        int hauteur = typeTiles[0].length; // Nombre de lignes
+        float longueurCase = (float) (((double) (right - left))/longueur);
+        float hauteurCase = (float) (((double) (bottom - top))/hauteur);
 
-        // Calcul des dimensions de chaque case
-        float longueurCase = (float) (((double) right - left) / longueur);
-        float hauteurCase = (float) (((double) bottom - top) / hauteur);
-
-        // Créer un objet Paint réutilisable
         Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL); // Remplissage des cases
+        paint.setStyle(Paint.Style.FILL);
 
-        // Parcourir la carte et dessiner les cases
-        for (int i = 0; i < hauteur; i++) {
-            for (int j = 0; j < longueur; j++) {
-                TypeTile tile = typeTiles[j][i]; // Accéder à la tuile actuelle
+        for (int i = 0; i < hauteur; i ++) {
+            for (int j = 0; j < longueur; j ++) {
+                TypeTile tile = typeTiles[j][i];
 
-                // Définir une couleur différente selon le type de tuile
                 switch (tile) {
                     case SOL:
                         paint.setColor(Color.parseColor("#9ddc91")); // Vert clair pour le sol
@@ -73,33 +60,42 @@ public class Map {
                         break;
                 }
 
-                // Calculer les coordonnées de la case
-                float caseLeft = left + j * longueurCase;
-                float caseTop = top + i * hauteurCase;
-                float caseRight = caseLeft + longueurCase;
-                float caseBottom = caseTop + hauteurCase;
+                float caseLeft = (float) (left + j * longueurCase);
+                float caseTop = (float) (top + i * hauteurCase);
+                float caseRight = (float) (caseLeft + longueurCase);
+                float caseBottom = (float) (caseTop + hauteurCase);
 
-                // Dessiner la case
                 canvas.drawRect(caseLeft, caseTop, caseRight, caseBottom, paint);
             }
         }
 
-        // Dessiner la position du joueur sur la minimap
         double joueurPosX = Game.getPartie().getJoueur().getPosX() / GenerateurNiveau.TAILLE_CASE;
         double joueurPosY = Game.getPartie().getJoueur().getPosY() / GenerateurNiveau.TAILLE_CASE;
 
         if (joueurPosX >= 0 && joueurPosX < longueur && joueurPosY >= 0 && joueurPosY < hauteur) {
-            paint.setColor(Color.RED); // Rouge pour le joueur
+            paint.setColor(Color.RED);
+
             float joueurLeft = (float) (left + joueurPosX * longueurCase - 5);
             float joueurTop = (float) (top + joueurPosY * hauteurCase - 5);
-            float joueurRight = joueurLeft + 10;
-            float joueurBottom = joueurTop + 10;
+            float joueurRight = (float) (joueurLeft + 10) ;
+            float joueurBottom = (float) (joueurTop + 10);
 
-            // Dessiner un rectangle représentant le joueur
             canvas.drawRect(joueurLeft, joueurTop, joueurRight, joueurBottom, paint);
         }
-        hud.draw(canvas); // Dessiner le HUD en premier
+
+        Paint mobpaint = new Paint();
+        mobpaint.setColor(Color.GRAY);
+        for(Movable m : Game.getPartie().getMobs()){
+            if(m.getPosXTile() >= 0 && m.getPosXTile() < longueur && m.getPosYTile() >= 0 && m.getPosYTile() < hauteur){
+                float joueurLeft = (float) (left + m.getPosXTile() * longueurCase - 5);
+                float joueurTop = (float) (top + m.getPosYTile() * hauteurCase - 5);
+                float joueurRight = (float) (joueurLeft + 10) ;
+                float joueurBottom = (float) (joueurTop + 10);
+                canvas.drawRect(joueurLeft, joueurTop, joueurRight, joueurBottom, mobpaint);
+            }
+        }
     }
+
 
 
 

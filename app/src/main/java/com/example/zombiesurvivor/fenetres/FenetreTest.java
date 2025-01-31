@@ -16,6 +16,7 @@ import com.example.zombiesurvivor.Image;
 import com.example.zombiesurvivor.ImageHealthBar;
 import com.example.zombiesurvivor.ImageHotbar;
 import com.example.zombiesurvivor.ImageManaBar;
+import com.example.zombiesurvivor.InventoryPage;
 import com.example.zombiesurvivor.Joystick;
 import com.example.zombiesurvivor.Obstacle;
 import com.example.zombiesurvivor.PixelText;
@@ -26,14 +27,12 @@ import com.example.zombiesurvivor.PotionSoin;
 import com.example.zombiesurvivor.WeaponBaton;
 
 public class FenetreTest extends Fenetre {
-    Floor sol;
-    Obstacle o;
     Joystick joystickDeplacement;
     Bouton boutonAttaque;
     ImageHealthBar healthBar;
     ImageManaBar manaBar;
     ImageHotbar[] hotbar = new ImageHotbar[4];
-    PixelText texteChalut;
+    InventoryPage inventoryPage;
     public FenetreTest(Page p) {
         super(p);
 
@@ -44,15 +43,15 @@ public class FenetreTest extends Fenetre {
         //Initailise game
         Game.getPartie();
 
-        Map c = GenerateurNiveau.genererCarte(page.getContext());
-        Game.getPartie().setCarte(c);
         Game.getPartie().setJoueur(new Player(page.getContext(), 3000, 3000, 80, 96,
                 "character",100, 79,0,0,0, true, 100, 50,100, 5,
                 joystickDeplacement, boutonAttaque));
+        Map c = GenerateurNiveau.genererCarte(page.getContext());
+        Game.getPartie().setCarte(c);
         Game.setContext(p.getContext());
         Game.getPartie().setFond(new Image(Game.getPartie().getContext(), 0, 0, MainActivity.canvasWidth, MainActivity.canvasHeight,"example_background" , 80));
 
-
+        inventoryPage = new InventoryPage();
 
         Bow arme = new Bow(page.getContext(), 0, 0, 80, 96, "item_bow", false, 100,0,0, 0, 0, 0,95, 120,
                 new Bullet(p.getContext(),0, 0, 36, 20, "pistol_bullet", false, 100,0,0,0,0, 5, 10, 0, 2000),1, 100);
@@ -66,8 +65,7 @@ public class FenetreTest extends Fenetre {
         Game.getPartie().getJoueur().getHotbar().add(arme,1);
         Game.getPartie().getJoueur().getHotbar().add(armeMelee, 1);
 
-        Game.getPartie().getJoueur().setSpawnPoint(Game.getPartie().getxPlayerSpawn(), Game.getPartie().getyPlayerSpawn());
-        //partie.getJoueur().setSpawnPoint(2800, 2800);
+        Game.getPartie().getJoueur().setSpawnPoint(2800, 2800);
         Game.getPartie().addMonster();
 
 
@@ -103,7 +101,6 @@ public class FenetreTest extends Fenetre {
         canvas.translate(translateX, translateY);
         Game.getPartie().draw(canvas);
         canvas.restore();
-        Game.getPartie().getCarte().drawMinMap(canvas, (int) pourcentLongueur(259.0/3), (int) pourcentHauteur(8.0/1.5), (int) pourcentLongueur(289.0/3), (int) pourcentHauteur(38.0/1.5));
 
         joystickDeplacement.draw(canvas);
         boutonAttaque.draw(canvas);
@@ -117,6 +114,8 @@ public class FenetreTest extends Fenetre {
                 Game.getPartie().getJoueur().getHotbar().get(i).getItem().drawIcone(canvas, hotbar[i].getPosX(), hotbar[i].getPosY(), hotbar[i].getTailleX(), hotbar[i].getTailleY());
             }
         }
+
+        inventoryPage.draw(canvas);
     }
 
 
@@ -124,6 +123,9 @@ public class FenetreTest extends Fenetre {
     public boolean onClick(MotionEvent event) {
         int motionaction = event.getActionMasked();
         int pointerCount = event.getPointerCount();
+
+        if(inventoryPage.onClick(event)) return true;
+
 
         for (int i = 0; i < pointerCount; i++) {
             // Get coordinates for each pointer

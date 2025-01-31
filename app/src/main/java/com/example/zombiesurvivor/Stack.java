@@ -9,6 +9,11 @@ public class Stack{
         this.item = i;
     }
 
+    public Stack(Stack s){
+        this.item = s.item;
+        this.qtt = s.qtt;
+    }
+
     public Item getItem() {
         return item;
     }

@@ -18,8 +18,10 @@ import java.util.ArrayList;
 
 public class Player extends Mob {
     private static final int NB_SLOT_HOTBAR = 4;
+    private static final int NB_SLOT_INVENTORY = 24;
     private static final double MAX_SPEEED = 0.2;
     private Inventory hotbar = new Inventory(NB_SLOT_HOTBAR);
+    private Inventory inventory = new Inventory(NB_SLOT_INVENTORY);
     private int mana;
     private int maxMana;
     private Joystick joyStickDeplacement;
@@ -376,5 +378,9 @@ public class Player extends Mob {
     public void setSpawnPoint(double x, double y){
         this.posX = x;
         this.posY = y;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
     }
 }

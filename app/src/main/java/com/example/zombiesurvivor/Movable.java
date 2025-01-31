@@ -1,14 +1,16 @@
 package com.example.zombiesurvivor;
 
+import static com.example.zombiesurvivor.carte.GenerateurNiveau.TAILLE_CASE;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-
+import android.util.LruCache;
 
 import java.util.ArrayList;
 
-public abstract class Movable implements Cloneable{
+public abstract class Movable implements Cloneable {
 
     final Context context;
     protected double posX;
@@ -25,13 +27,24 @@ public abstract class Movable implements Cloneable{
     protected int currentCentiFrame;
     protected ArrayList<Bitmap> images = new ArrayList<Bitmap>();
 
+    // Cache pour les bitmaps
+    private static LruCache<String, Bitmap> imageCache;
+
+    static {
+        // Taille du cache en fonction de la mémoire disponible
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 8; // 1/8 de la mémoire disponible
+        imageCache = new LruCache<>(cacheSize);
+    }
+
     /*
     Constructor
      */
     public Movable(Context context, double posX, double posY, int tailleX, int tailleY,
                    String cheminImages, boolean isAnimating, int timeCentiBetweenFrame,
                    double enfoncementTop, double enfoncementBottom,
-                   double enfoncementLeft, double enfoncementRight){
+                   double enfoncementLeft, double enfoncementRight) {
+        this.context = context;
         this.posX = posX;
         this.posY = posY;
         this.tailleX = tailleX;
@@ -39,27 +52,49 @@ public abstract class Movable implements Cloneable{
         this.cheminImages = cheminImages;
         this.isAnimating = isAnimating;
         this.timeCentiBetweenFrame = timeCentiBetweenFrame;
-        this.enfoncementBottom = enfoncementBottom;
         this.enfoncementTop = enfoncementTop;
+        this.enfoncementBottom = enfoncementBottom;
         this.enfoncementLeft = enfoncementLeft;
         this.enfoncementRight = enfoncementRight;
-        this.context = context;
 
-        //Decode all images that has the same name as the provided string
+        // Chargement et mise en cache des images
         int i = 1;
         boolean moreImg = true;
-        while(moreImg){
-            int resId = context.getResources().getIdentifier(cheminImages+i, "drawable", context.getPackageName());
-            if(resId!=0){
-                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
-                images.add(Bitmap.createScaledBitmap(bitmap, tailleX, tailleY, false));
+        while (moreImg) {
+            int resId = context.getResources().getIdentifier(cheminImages + i, "drawable", context.getPackageName());
+            if (resId != 0) {
+                String imageName = cheminImages + i; // Nom unique pour chaque image
+                Bitmap bitmap = loadBitmap(imageName, resId, tailleX, tailleY);
+                images.add(bitmap);
                 i++;
-            }else{
+            } else {
                 moreImg = false;
             }
         }
+    }
 
+    /*
+    Cache methods
+     */
+    private Bitmap getBitmapFromCache(String imageName) {
+        return imageCache.get(imageName);
+    }
 
+    private void addBitmapToCache(String imageName, Bitmap bitmap) {
+        if (getBitmapFromCache(imageName) == null) {
+            imageCache.put(imageName, bitmap);
+        }
+    }
+
+    private Bitmap loadBitmap(String imageName, int resId, int width, int height) {
+        Bitmap bitmap = getBitmapFromCache(imageName);
+        if (bitmap == null) {
+            // Décodage et mise en cache si l'image n'est pas déjà dans le cache
+            bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
+            bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+            addBitmapToCache(imageName, bitmap);
+        }
+        return bitmap;
     }
 
     /*
@@ -83,7 +118,6 @@ public abstract class Movable implements Cloneable{
         return clone;
     }
 
-
     /*
     Getters
      */
@@ -93,6 +127,12 @@ public abstract class Movable implements Cloneable{
 
     public double getPosY() {
         return posY;
+    }
+    public int getPosXTile() {
+        return (int) posX/TAILLE_CASE;
+    }
+    public int getPosYTile() {
+        return (int) posY/TAILLE_CASE;
     }
 
     public int getTailleX() {
@@ -106,7 +146,6 @@ public abstract class Movable implements Cloneable{
     /*
     Setters
      */
-
     public void setPosX(double posX) {
         this.posX = posX;
     }
@@ -126,23 +165,21 @@ public abstract class Movable implements Cloneable{
     /*
     Methods
      */
-    public void draw(Canvas canvas){
-        canvas.drawBitmap(images.get(currentCentiFrame/timeCentiBetweenFrame), (float) posX, (float) posY, null);
+    public void draw(Canvas canvas) {
+        canvas.drawBitmap(images.get(currentCentiFrame / timeCentiBetweenFrame), (float) posX, (float) posY, null);
     }
-    public void update(){
-        if(isAnimating) {
+
+    public void update() {
+        if (isAnimating) {
             currentCentiFrame++;
-            currentCentiFrame = currentCentiFrame%(images.size()*timeCentiBetweenFrame);
+            currentCentiFrame = currentCentiFrame % (images.size() * timeCentiBetweenFrame);
+        } else {
+            currentCentiFrame = 0;
         }
-        else currentCentiFrame = 0;
     }
 
     /*
     Static methods
-     */
-
-    /*
-    Check if the to movables are touching
      */
     public static boolean areTouching(Movable m1, Movable m2, boolean usingEnfoncement) {
         double m1Left, m1Right, m1Top, m1Bottom;
@@ -176,30 +213,21 @@ public abstract class Movable implements Cloneable{
                 m1Top >= m2Bottom);
     }
 
-
-
-    /*
-    Check if a movable is touching one of m2 movable
-     */
-    public static Movable isOneTouching(Movable m1, ArrayList<? extends Movable> m2){
-        for(Movable m: m2){
-            if(areTouching(m1, m, true)) return m;
+    public static Movable isOneTouching(Movable m1, ArrayList<? extends Movable> m2) {
+        for (Movable m : m2) {
+            if (areTouching(m1, m, true)) return m;
         }
         return null;
     }
 
-
-    /*
-    Check if a movable is going to touch any movables in m2 and return all that would be touched
-    */
     public static ArrayList<Movable> getAllGonnaTouchMovables(Movable m1, ArrayList<? extends Movable> m2, double x, double y) {
         ArrayList<Movable> touchingMovables = new ArrayList<>();
         Movable nextMov = m1.clone();
         nextMov.posX += x;
         nextMov.posY += y;
 
-        for(Movable m: m2) {
-            if(areTouching(nextMov, m, true)) {
+        for (Movable m : m2) {
+            if (areTouching(nextMov, m, true)) {
                 touchingMovables.add(m);
             }
         }
@@ -209,5 +237,4 @@ public abstract class Movable implements Cloneable{
     public Bitmap getBitmap(int i) {
         return this.images.get(i);
     }
-
 }

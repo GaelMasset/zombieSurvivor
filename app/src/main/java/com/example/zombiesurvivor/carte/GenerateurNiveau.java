@@ -3,6 +3,7 @@ package com.example.zombiesurvivor.carte;
 import android.content.Context;
 
 import com.example.zombiesurvivor.Floor;
+import com.example.zombiesurvivor.Game;
 import com.example.zombiesurvivor.Obstacle;
 
 import java.util.ArrayList;
@@ -14,8 +15,8 @@ import java.util.Random;
         public static final int TAILLE_CASE = 100;
 
         // Paramètres du bruit de Perlin
-        private static final float SEUIL_EAU = -0.1f;  // Valeur en dessous de laquelle on a de l'eau
-        private static final float SEUIL_SOL = -0.1f;  // Valeur au-dessus de laquelle on a du sol
+        private static final float SEUIL_EAU = -0.2f;  // Valeur en dessous de laquelle on a de l'eau
+        private static final float SEUIL_SOL = -0.2f;  // Valeur au-dessus de laquelle on a du sol
         private static final float SEUIL_VERDDURE = 0.15f;
         private static final float PERTURBATION = 0.05f;  // L'influence du bruit pour des variations douces
 
@@ -47,34 +48,25 @@ import java.util.Random;
             for (int x = 0; x < LARGEUR_CARTE; x++) {
                 for (int y = 0; y < HAUTEUR_CARTE; y++) {
                     float hauteur = carteHauteurs[x][y];
-                    String cheminImage;
                     TypeTile type;
 
                     if (hauteur < SEUIL_EAU) {
-                        // Zones d'eau (vide)
                         type = TypeTile.VIDE;
-                        cheminImage = "example_tile_vide";
                     } else if (hauteur < SEUIL_SOL) {
-                        // Zones de terre (sol)
                         type = TypeTile.SOL;
-                        cheminImage = "example_tile";
                     }  else {
-                        // Toute la zone au-dessus du seuil devient du sol (pour simplification)
                         type = TypeTile.SOL;
-                        cheminImage = "example_tile";
                     }
 
-                    // Ajouter la tuile à la liste
-                    int xPos = x * TAILLE_CASE;
-                    int yPos = y * TAILLE_CASE;
 
 
                     carte[x][y] = type;
                 }
             }
 
-            // Ajouter des murs autour des îles
             ajouterMurs(carte, context, obstacles, floors);
+            ajouterSpawnPoint(carte, context, floors);
+
             String[] cheminsDeco = {"example_tile_deco_herbe", "example_tile_deco_fleur", "example_tile_deco_roche"};
             ajouterDecorations(carte, context, obstacles, cheminsDeco);
 
@@ -82,6 +74,20 @@ import java.util.Random;
             Map m = new Map(obstacles, floors);
             m.setMap(carte);
             return m;
+        }
+
+        private static void ajouterSpawnPoint(TypeTile[][] carte, Context context, ArrayList<Floor> floors) {
+            for(int i = LARGEUR_CARTE/2; i > 0; i--){
+                for(int j = HAUTEUR_CARTE/2; j > 0; j--){
+                    if(carte[i][j] == TypeTile.SOL){
+                        carte[i][j] = TypeTile.PLAYERSPAWN;
+                        floors.add(new Floor(context,
+                                i*TAILLE_CASE, j*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, "spawnpoint", true, 80, 0, 0, 0, 0));
+                        Game.getPartie().getJoueur().setSpawnPoint(i*TAILLE_CASE, j*TAILLE_CASE);
+                        return;
+                    }
+                }
+            }
         }
 
         // Fonction pour ajouter des murs autour des îles
