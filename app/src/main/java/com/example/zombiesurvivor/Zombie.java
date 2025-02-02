@@ -15,7 +15,7 @@ public class Zombie extends Mob {
         return new String[0];
     }
 
-    @Override
+
     public boolean move() {
         return false;
     }

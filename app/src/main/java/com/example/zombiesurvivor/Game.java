@@ -40,6 +40,7 @@ public class Game {
 
     public Game(Context context, Player joueur, Map carte) {
         this.camera = new CameraPlayer();
+        this.context = context;
 
         Random r = new Random();
         randomSpawnPoint = r.nextInt(1000);

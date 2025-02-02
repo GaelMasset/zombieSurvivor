@@ -46,7 +46,6 @@ public class Player extends Mob {
         return new String[]{"_idle","_walking","_shootingbow", "_drinking", "_hittingsword"};
     }
 
-    @Override
     public boolean move() {
         double futurePosX = posX + joyStickDeplacement.actuatorX * speed * MAX_SPEEED;
         double futurePosY = posY + joyStickDeplacement.getActuatorY() * speed * MAX_SPEEED;
@@ -141,6 +140,7 @@ public class Player extends Mob {
 
     @Override
     public void update() {
+        super.update();
         updateAction();
         switch (action){
             case USING:
@@ -221,6 +221,7 @@ public class Player extends Mob {
 
     @Override
     public void draw(Canvas canvas) {
+        super.draw(canvas);
         // Dessiner le joueur en fonction de son action et sa direction
         switch (action) {
             case WALKING_RIGHT:
