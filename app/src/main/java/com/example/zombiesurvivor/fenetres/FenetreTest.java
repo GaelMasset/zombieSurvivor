@@ -42,13 +42,13 @@ public class FenetreTest extends Fenetre {
 
         //Initailise game
         Game.getPartie();
+        Game.setContext(p.getContext());
 
         Game.getPartie().setJoueur(new Player(page.getContext(), 3000, 3000, 80, 96,
                 "character",100, 79,0,0,0, true, 100, 50,100, 5,
                 joystickDeplacement, boutonAttaque));
         Map c = GenerateurNiveau.genererCarte(page.getContext());
         Game.getPartie().setCarte(c);
-        Game.setContext(p.getContext());
         Game.getPartie().setFond(new Image(Game.getPartie().getContext(), 0, 0, MainActivity.canvasWidth, MainActivity.canvasHeight,"example_background" , 80));
 
         inventoryPage = new InventoryPage();
@@ -65,7 +65,7 @@ public class FenetreTest extends Fenetre {
         Game.getPartie().getJoueur().getHotbar().add(arme,1);
         Game.getPartie().getJoueur().getHotbar().add(armeMelee, 1);
 
-        Game.getPartie().getJoueur().setSpawnPoint(2800, 2800);
+        Game.getPartie().getJoueur().setSpawnPoint(2000, 2000);
         Game.getPartie().addMonster();
 
 

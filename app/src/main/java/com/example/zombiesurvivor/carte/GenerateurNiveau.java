@@ -4,14 +4,16 @@ import android.content.Context;
 
 import com.example.zombiesurvivor.Floor;
 import com.example.zombiesurvivor.Game;
+import com.example.zombiesurvivor.Movable;
 import com.example.zombiesurvivor.Obstacle;
+import com.example.zombiesurvivor.Tag;
 
 import java.util.ArrayList;
 import java.util.Random;
 
     public class GenerateurNiveau {
-        private static final int LARGEUR_CARTE = 100;  // Largeur de la carte (100 tuiles)
-        private static final int HAUTEUR_CARTE = 100;  // Hauteur de la carte (100 tuiles)
+        public static final int LARGEUR_CARTE = 100;  // Largeur de la carte (100 tuiles)
+        public static final int HAUTEUR_CARTE = 100;  // Hauteur de la carte (100 tuiles)
         public static final int TAILLE_CASE = 100;
 
         // Paramètres du bruit de Perlin
@@ -21,10 +23,9 @@ import java.util.Random;
         private static final float PERTURBATION = 0.05f;  // L'influence du bruit pour des variations douces
 
         private static PerlinNoise perlinNoise;
+        private static Movable[][] objetsCarte = new Movable[LARGEUR_CARTE][HAUTEUR_CARTE];
 
         public static Map genererCarte(Context context) {
-            ArrayList<Obstacle> obstacles = new ArrayList<>();
-            ArrayList<Floor> floors = new ArrayList<>();
             ArrayList<Obstacle> brouillards = new ArrayList<>();
             Random random = new Random();
 
@@ -49,7 +50,6 @@ import java.util.Random;
                 for (int y = 0; y < HAUTEUR_CARTE; y++) {
                     float hauteur = carteHauteurs[x][y];
                     TypeTile type;
-
                     if (hauteur < SEUIL_EAU) {
                         type = TypeTile.VIDE;
                     } else if (hauteur < SEUIL_SOL) {
@@ -57,32 +57,29 @@ import java.util.Random;
                     }  else {
                         type = TypeTile.SOL;
                     }
-
-
-
                     carte[x][y] = type;
                 }
             }
 
-            ajouterMurs(carte, context, obstacles, floors);
-            ajouterSpawnPoint(carte, context, floors);
+            ajouterMurs(carte, context);
+            ajouterSpawnPoint(carte, context);
 
             String[] cheminsDeco = {"example_tile_deco_herbe", "example_tile_deco_fleur", "example_tile_deco_roche"};
-            ajouterDecorations(carte, context, obstacles, cheminsDeco);
+            ajouterDecorations(carte, context, cheminsDeco);
 
             // Créer et retourner la carte avec les tuiles générées
-            Map m = new Map(obstacles, floors);
+            Map m = new Map(objetsCarte);
             m.setMap(carte);
             return m;
         }
 
-        private static void ajouterSpawnPoint(TypeTile[][] carte, Context context, ArrayList<Floor> floors) {
+        private static void ajouterSpawnPoint(TypeTile[][] carte, Context context) {
             for(int i = LARGEUR_CARTE/2; i > 0; i--){
                 for(int j = HAUTEUR_CARTE/2; j > 0; j--){
                     if(carte[i][j] == TypeTile.SOL){
                         carte[i][j] = TypeTile.PLAYERSPAWN;
-                        floors.add(new Floor(context,
-                                i*TAILLE_CASE, j*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, "spawnpoint", true, 80, 0, 0, 0, 0));
+                        objetsCarte[i][j] = new Floor(context,
+                                i*TAILLE_CASE, j*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, "spawnpoint", true, 80, 0, 0, 0, 0);
                         Game.getPartie().getJoueur().setSpawnPoint(i*TAILLE_CASE, j*TAILLE_CASE);
                         return;
                     }
@@ -91,7 +88,7 @@ import java.util.Random;
         }
 
         // Fonction pour ajouter des murs autour des îles
-        private static void ajouterMurs(TypeTile[][] carte, Context context, ArrayList<Obstacle> obstacles, ArrayList<Floor> sols) {
+        private static void ajouterMurs(TypeTile[][] carte, Context context) {
             for (int x = 1; x < LARGEUR_CARTE - 1; x++) {
                 for (int y = 1; y < HAUTEUR_CARTE - 1; y++) {
                     if (carte[x][y] == TypeTile.SOL) {
@@ -148,13 +145,22 @@ import java.util.Random;
                         int yPos = y * TAILLE_CASE;
                         if(carte[x][y] == TypeTile.VIDE){
 
+                            objetsCarte[x][y] = new Floor(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
+                                    , "example_tile_vide", true, 100,
+                                    0, 0, 0, 0);
                         } else if(carte[x][y] == TypeTile.SOL){
-                            sols.add(new Floor(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, cheminImage, true, 80, 0, 0, 0, 0));
+                            objetsCarte[x][y] = new Floor(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
+                                    , "example_tile", true, 100,
+                                    0, 0, 0, 0);
                         } else if(carte[x][y] == TypeTile.BORDURE){
-                            obstacles.add(new Obstacle(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  cheminImage, true, 100, 90, 90));
+                            objetsCarte[x][y] = new Floor(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
+                                    , cheminImage, true, 100,
+                                    0, 0, 0, 0);
+
+                            objetsCarte[x][y].addTag(Tag.SOLIDE);
                         }
                     }
-                    //LE BROUILLARD
+                    /*LE BROUILLARD
                     if(x==1 && y == 1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_topleft", true, 100, 999, 999));
                     else if(x == 1 && y == HAUTEUR_CARTE-1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_bottomleft", true, 100, 999, 999));
                     else if(x == LARGEUR_CARTE-1 && y == 1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_topright", true, 100, 999, 999));
@@ -165,18 +171,18 @@ import java.util.Random;
                     else if(x == LARGEUR_CARTE-1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_right", true, 100, 999, 999));
                     else if(x == HAUTEUR_CARTE-1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_bottom", true, 100, 999, 999));
 
-                    //FIN LE BROUILLARD
+                    //FIN LE BROUILLARD*/
                 }
             }
-            //GROS BROUILLARD AU DESSUS
+            /*//GROS BROUILLARD AU DESSUS
             for(int x = 1; x < LARGEUR_CARTE; x++){
                 for(int y = -5; y <= 0; y++){
                     obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard", true, 100, 999, 999));
                 }
-            }
+            }*/
         }
 
-        private static void ajouterDecorations(TypeTile[][] carte, Context context, ArrayList<Obstacle> decorations, String[] cheminsDeco) {
+        private static void ajouterDecorations(TypeTile[][] carte, Context context, String[] cheminsDeco) {
             Random random = new Random();
 
             for (int x = 0; x < LARGEUR_CARTE; x++) {
@@ -191,7 +197,7 @@ import java.util.Random;
                             // Ajouter la décoration comme un obstacle
                             int xPos = x * TAILLE_CASE;
                             int yPos = y * TAILLE_CASE;
-                            decorations.add(new Obstacle(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0, cheminDeco, true, 100, 0, 0));
+                            objetsCarte[x][y] = new Obstacle(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0, cheminDeco, true, 100, 0, 0);
                         }
                     }
                 }

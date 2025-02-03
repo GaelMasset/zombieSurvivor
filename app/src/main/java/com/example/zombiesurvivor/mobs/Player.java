@@ -12,7 +12,9 @@ import com.example.zombiesurvivor.Item;
 import com.example.zombiesurvivor.Joystick;
 import com.example.zombiesurvivor.Movable;
 import com.example.zombiesurvivor.PotionSoin;
+import com.example.zombiesurvivor.Tag;
 import com.example.zombiesurvivor.WeaponBaton;
+import com.example.zombiesurvivor.carte.TypeTile;
 
 import java.util.ArrayList;
 
@@ -54,9 +56,8 @@ public class Player extends Mob {
             futurePosX -= (joyStickDeplacement.actuatorX * speed * MAX_SPEEED)/1.33;
             futurePosY -= (joyStickDeplacement.getActuatorY() * speed * MAX_SPEEED)/1.33;
         }
-
-
-            ArrayList<Movable> obstacles = getAllGonnaTouchMovables(this, Game.getPartie().getCarte().getObstacles(),
+        ArrayList<Movable> obsAroundPlayer = Game.getPartie().getCarte().getMovablesAround(this, 4, Tag.SOLIDE);
+        ArrayList<Movable> obstacles = getAllGonnaTouchMovables(this, obsAroundPlayer,
                     joyStickDeplacement.actuatorX * speed, joyStickDeplacement.getActuatorY() * speed);
 
             if (obstacles.isEmpty()) {
@@ -64,10 +65,10 @@ public class Player extends Mob {
                 posY = futurePosY;
                 return true;
             } else {
-                ArrayList<Movable> xObstacles = getAllGonnaTouchMovables(this, Game.getPartie().getCarte().getObstacles(),
+                ArrayList<Movable> xObstacles = getAllGonnaTouchMovables(this, obsAroundPlayer,
                         joyStickDeplacement.actuatorX * speed, 0);
 
-                ArrayList<Movable> yObstacles = getAllGonnaTouchMovables(this, Game.getPartie().getCarte().getObstacles(),
+                ArrayList<Movable> yObstacles = getAllGonnaTouchMovables(this, obsAroundPlayer,
                         0, joyStickDeplacement.getActuatorY() * speed);
 
                 double deltaX = 0;

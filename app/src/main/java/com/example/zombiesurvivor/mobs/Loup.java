@@ -9,7 +9,10 @@ import com.example.zombiesurvivor.Base.MainActivity;
 import com.example.zombiesurvivor.Destroyable;
 import com.example.zombiesurvivor.Game;
 import com.example.zombiesurvivor.Movable;
+import com.example.zombiesurvivor.Tag;
 import com.example.zombiesurvivor.Zone;
+
+import java.util.ArrayList;
 
 public class Loup extends Mob{
     private int degatsAttaque;
@@ -75,17 +78,6 @@ public class Loup extends Mob{
 
 
 
-    /*
-    Methodes disponibles:
-    posX, posY, tailleX, tailleY (tailles et coordonnées de Loup)
-    partie.getJoueur().posX, ect ... (pareil pour le joueur)
-    rangeXFrom(partie.getJoueur() distance du joueur (tjr positif)
-    rangeYFrom
-    isAtTheRightOf(partie.getJoueur())
-    isAtTheLeftOf(partie.getJoueur())
-    int currentAttackCd; Le cd avant de pouvoir attaquer
-    action = Action.IDLE ou Action.ATTACKING ou Action.WALKING_RIGHT ou Action.WALKING_LEFT
-     */
     private void updateAction() {
     }
 

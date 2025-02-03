@@ -1,5 +1,8 @@
 package com.example.zombiesurvivor.carte;
 
+import static com.example.zombiesurvivor.carte.GenerateurNiveau.HAUTEUR_CARTE;
+import static com.example.zombiesurvivor.carte.GenerateurNiveau.LARGEUR_CARTE;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,20 +13,19 @@ import com.example.zombiesurvivor.Game;
 import com.example.zombiesurvivor.Image;
 import com.example.zombiesurvivor.Movable;
 import com.example.zombiesurvivor.Obstacle;
+import com.example.zombiesurvivor.Tag;
 import com.example.zombiesurvivor.mobs.Mob;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Map {
     private TypeTile[][] typeTiles;
     private Movable[][] objetsCarte;
-    private ArrayList<Obstacle> obstacles;
-    private ArrayList<Floor> sols;
     private Context context;
 
-    public Map(ArrayList<Obstacle> obstacles, ArrayList<Floor> floors){
-        this.obstacles = obstacles;
-        this.sols = floors;
+    public Map(Movable[][] carte){
+        this.objetsCarte = carte;
     }
 
 
@@ -100,28 +102,12 @@ public class Map {
 
 
     public void update() {
-        for (int i = 0; i < sols.size(); i++) {
-            sols.get(i).update();
-        }
-        for (int i = 0; i < obstacles.size(); i++) {
-            obstacles.get(i).update();
-        }
+
     }
     public void draw(Canvas canvas) {
-        for (int i = 0; i < sols.size(); i++) {
-            sols.get(i).draw(canvas);
+        for(Movable m: this.getMovablesAround(Game.getPartie().getJoueur(), 8, null)){
+            m.draw(canvas);
         }
-        for (int i = 0; i < obstacles.size(); i++) {
-            obstacles.get(i).draw(canvas);
-        }
-    }
-
-
-    public ArrayList<Obstacle> getObstacles() {
-        return this.obstacles;
-    }
-    public ArrayList<Floor> getFloors() {
-        return this.sols;
     }
 
     public TypeTile[][] getMap() {
@@ -134,5 +120,48 @@ public class Map {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public ArrayList<Movable> getMovablesAround(Movable m, int rayon, Tag t){
+        ArrayList<Movable> mov = new ArrayList<Movable>();
+        for(int x = m.getPosXTile()-rayon; x < m.getPosXTile() + rayon; x++){
+            for(int y = m.getPosYTile()-rayon; y < m.getPosYTile() + rayon; y++){
+                if(x < 0 || x > this.objetsCarte.length) continue;
+                if(y < 0 || y > objetsCarte[x].length) continue;
+
+                if(objetsCarte[x][y] != null) {
+                    if (t == null || objetsCarte[x][y].hasTag(t)) {
+                        mov.add(objetsCarte[x][y]);
+                    }
+                }
+            }
+        }
+        return mov;
+    }
+
+    public Movable[][] getObjetsCarte() {
+        return objetsCarte;
+    }
+    public void setObjetsCarte(int x, int y, Movable mov){
+        this.objetsCarte[x][y] = mov;
+    }
+
+    public ArrayList<Floor> getFloors() {
+        ArrayList<Floor> mov = new ArrayList<>();
+        for(int x = 0; x < this.objetsCarte.length; x++){
+            for(int y = 0; y < this.objetsCarte[x].length; y++){
+                if(objetsCarte[x][y] != null && objetsCarte[x][y] instanceof Floor) mov.add((Floor) objetsCarte[x][y]);
+            }
+        }
+        return mov;
+    }
+    public ArrayList<Obstacle> getObstacles() {
+        ArrayList<Obstacle> mov = new ArrayList<>();
+        for(int x = 0; x < this.objetsCarte.length; x++){
+            for(int y = 0; y < this.objetsCarte[x].length; y++){
+                if(objetsCarte[x][y] != null && objetsCarte[x][y] instanceof Obstacle) mov.add((Obstacle) objetsCarte[x][y]);
+            }
+        }
+        return mov;
     }
 }

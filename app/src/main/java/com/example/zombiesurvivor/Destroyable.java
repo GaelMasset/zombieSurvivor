@@ -26,7 +26,7 @@ public abstract class Destroyable extends Movable{
         }
     }
     public void destroy(){
-        Game.getPartie().getCarte().getObstacles().remove(this);
+        Game.getPartie().getCarte().setObjetsCarte(this.getPosXTile(), this.getPosYTile(), null);
     }
     public int getHp(){
         return hp;

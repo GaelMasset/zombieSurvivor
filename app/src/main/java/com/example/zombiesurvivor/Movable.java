@@ -24,6 +24,7 @@ public abstract class Movable implements Cloneable {
     protected String cheminImages;
     protected boolean isAnimating;
     protected int timeCentiBetweenFrame;
+    protected ArrayList<Tag> tags = new ArrayList<>();
     protected int currentCentiFrame;
     protected ArrayList<Bitmap> images = new ArrayList<Bitmap>();
 
@@ -236,5 +237,15 @@ public abstract class Movable implements Cloneable {
 
     public Bitmap getBitmap(int i) {
         return this.images.get(i);
+    }
+
+    public void addTag(Tag tag){
+        tags.add(tag);
+    }
+    public ArrayList<Tag> getTags(){
+        return tags;
+    }
+    public boolean hasTag(Tag t){
+        return tags.contains(t);
     }
 }
