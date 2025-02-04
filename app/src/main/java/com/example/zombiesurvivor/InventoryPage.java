@@ -19,6 +19,7 @@ public class InventoryPage {
     private Image hudMap;
     private Bouton[] slotInventory = new Bouton[12];
     private Bouton[] slotHotbar = new Bouton[4];
+    private Bouton trashIcon;
     private boolean isOpen;
     private boolean isDraggingInventory = false;
     private boolean isDraggingHotbar = false;
@@ -53,7 +54,10 @@ public class InventoryPage {
                     (int) pourcentLongueur(22.0 / 3), (int) pourcentHauteur(22.0 / 1.5), "inventory_inventory_slot",
                     "inventory_inventory_slot_clicked", true, 80);
         }
-
+        trashIcon = new Bouton(Game.getPartie().getContext(), pourcentLongueur(142.0/3), pourcentHauteur(115.0/1.5),
+                (int)pourcentLongueur(16.0/3), (int)pourcentHauteur(17.0/1.5),
+                "inventory_trash_icon", "inventory_trash_icon",
+                true, 100);
     }
 
     public void draw(Canvas canvas){
@@ -90,6 +94,8 @@ public class InventoryPage {
                             yImageDrag, slotInventory[i].tailleX, slotHotbar[i].tailleY);
                 }
             }
+            trashIcon.draw(canvas);
+
         } else{
             icone.draw(canvas);
         }
@@ -203,6 +209,14 @@ public class InventoryPage {
                                 temp2.set(i, tempo);
                             }
                         }
+                    }
+                    if(trashIcon.isPressed(xClicked, yClicked)){
+                        Inventory s;
+                        if(isDraggingInventory) s = Game.getPartie().getJoueur().getInventory();
+                        else s = Game.getPartie().getJoueur().getHotbar();
+
+                        s.getSelectedStack().getItem().drop();
+                        s.remove(s.getSelectedSlot());
                     }
 
 

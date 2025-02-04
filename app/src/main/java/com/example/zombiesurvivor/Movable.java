@@ -129,10 +129,12 @@ public abstract class Movable implements Cloneable {
     public double getPosY() {
         return posY;
     }
-    public int getPosXTile() {
+    public int getPosXTile(boolean center) {
+        if(center){return (int) (posX+((double) tailleX /2))/TAILLE_CASE;}
         return (int) posX/TAILLE_CASE;
     }
-    public int getPosYTile() {
+    public int getPosYTile(boolean center) {
+        if(center){return (int) (posY+((double) tailleY /2))/TAILLE_CASE;}
         return (int) posY/TAILLE_CASE;
     }
 

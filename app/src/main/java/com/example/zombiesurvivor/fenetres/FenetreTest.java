@@ -65,7 +65,6 @@ public class FenetreTest extends Fenetre {
         Game.getPartie().getJoueur().getHotbar().add(arme,1);
         Game.getPartie().getJoueur().getHotbar().add(armeMelee, 1);
 
-        Game.getPartie().getJoueur().setSpawnPoint(2000, 2000);
         Game.getPartie().addMonster();
 
 

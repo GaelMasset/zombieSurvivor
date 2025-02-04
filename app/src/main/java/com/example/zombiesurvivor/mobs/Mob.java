@@ -1,9 +1,12 @@
 package com.example.zombiesurvivor.mobs;
 
+import static com.example.zombiesurvivor.carte.GenerateurNiveau.TAILLE_CASE;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 
 import com.example.zombiesurvivor.Destroyable;
 import com.example.zombiesurvivor.Game;
@@ -22,6 +25,8 @@ public abstract class Mob extends Destroyable {
     protected Ray[] nearbyObstacle = new Ray[NB_RAYON_NEARBY_OBS];
     int colorGreen = 0xFF00FF00;
     int colorRed = 0xFFFF0000;
+    int colorBlue = 0xFF0000FF;
+    int colorPurple = 0xFFFFAAAA;
     public Mob(Context context, double posX, double posY, int tailleX,
                int tailleY, String cheminImages,
                double enfoncementTop, double enfoncementBottom,
@@ -34,7 +39,7 @@ public abstract class Mob extends Destroyable {
 // Instanciation des rays autour du Mob (dans les 8 directions cardinales et diagonales)
         float centerX = (float) (getPosX() + tailleX / 2);
         float centerY = (float) (getPosY() + tailleY / 2);
-        int longueur = 250;
+        int longueur = 70;
 
 // Directions cardinales et diagonales avec leurs angles correspondants (en radians)
         for (int i = 0; i < NB_RAYON_NEARBY_OBS; i++) {
@@ -78,36 +83,41 @@ public abstract class Mob extends Destroyable {
         // Met à jour chaque rayon
         for (Ray ray : nearbyObstacle) {
             ray.setStart((float) centerX, (float) centerY);  // Déplacer le point de départ de chaque rayon
+            ray.emptyEncounteredMovable();
         }
 
         // Vérifier les collisions
         ArrayList<Movable> mov = new ArrayList<>();
         mov.add(Game.getPartie().getJoueur());
-        checkRayCollisions(Game.getPartie());    }
+        checkRayCollisions(Game.getPartie());
+    }
 
     // Vérifier les collisions avec les Movables (obstacles)
     void checkRayCollisions(Game partie) {
         for (Ray ray : nearbyObstacle) {
+            ray.setColorPaint(colorRed);
             float longueur = ray.getMaxLength();
-            for (Movable movable : obstacles) {
+            for (Movable movable : partie.getCarte().getMovablesAround(this, 2, Tag.SOLIDE)) {
                 float longMov = ray.checkCollision(movable);
                 if (longMov < longueur) {
                     longueur = longMov;
+                    ray.addEncounteredMovable(movable);
+                    ray.setColorPaint(colorGreen);
                 }
             }
-            ray.setLength(longueur);
-            if(longueur < ray.getMaxLength()){
-                ray.setColorPaint(colorFound);
-            } else{
-                ray.setColorPaint(colorRed);
+            for (Movable movable : partie.getCarte().getMovablesAround(this, 2, Tag.DECORATION)) {
+                float longMov = ray.checkCollision(movable);
+                if (longMov < longueur) {
+                    longueur = longMov;
+                    ray.addEncounteredMovable(movable);
+                    ray.setColorPaint(colorPurple);
+                }
             }
         }
     }
 
     @Override
     public void draw(Canvas canvas) {
-        for (Ray ray : nearbyObstacle) {
-            ray.draw(canvas);
-        }
+
     }
 }

@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import com.example.zombiesurvivor.Floor;
 import com.example.zombiesurvivor.Game;
 import com.example.zombiesurvivor.Image;
+import com.example.zombiesurvivor.Item;
 import com.example.zombiesurvivor.Movable;
 import com.example.zombiesurvivor.Obstacle;
 import com.example.zombiesurvivor.Tag;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Map {
+    private Item[][] items;
     private TypeTile[][] typeTiles;
     private Movable[][] objetsCarte;
     private Context context;
@@ -36,7 +38,6 @@ public class Map {
 
         int longueur = typeTiles.length;
         int hauteur = typeTiles[0].length;
-
         float longueurCase = (float) (((double) (right - left))/longueur);
         float hauteurCase = (float) (((double) (bottom - top))/hauteur);
 
@@ -88,9 +89,9 @@ public class Map {
         Paint mobpaint = new Paint();
         mobpaint.setColor(Color.GRAY);
         for(Movable m : Game.getPartie().getMobs()){
-            if(m.getPosXTile() >= 0 && m.getPosXTile() < longueur && m.getPosYTile() >= 0 && m.getPosYTile() < hauteur){
-                float joueurLeft = (float) (left + m.getPosXTile() * longueurCase - 5);
-                float joueurTop = (float) (top + m.getPosYTile() * hauteurCase - 5);
+            if(m.getPosXTile(true) >= 0 && m.getPosXTile(true) < longueur && m.getPosYTile(true) >= 0 && m.getPosYTile(true) < hauteur){
+                float joueurLeft = (float) (left + m.getPosXTile(true) * longueurCase - 5);
+                float joueurTop = (float) (top + m.getPosYTile(true) * hauteurCase - 5);
                 float joueurRight = (float) (joueurLeft + 10) ;
                 float joueurBottom = (float) (joueurTop + 10);
                 canvas.drawRect(joueurLeft, joueurTop, joueurRight, joueurBottom, mobpaint);
@@ -108,6 +109,9 @@ public class Map {
         for(Movable m: this.getMovablesAround(Game.getPartie().getJoueur(), 8, null)){
             m.draw(canvas);
         }
+        for(Item i: getItemsAround(Game.getPartie().getJoueur(), 8)){
+            i.drawIcone(canvas, i.getPosX(), i.getPosY(), i.getTailleX(), i.getTailleY());
+        }
     }
 
     public TypeTile[][] getMap() {
@@ -116,6 +120,8 @@ public class Map {
 
     public void setMap(TypeTile[][] map) {
         this.typeTiles = map;
+        this.items = new Item[typeTiles.length][typeTiles[0].length];
+
     }
 
     public void setContext(Context context) {
@@ -124,10 +130,10 @@ public class Map {
 
     public ArrayList<Movable> getMovablesAround(Movable m, int rayon, Tag t){
         ArrayList<Movable> mov = new ArrayList<Movable>();
-        for(int x = m.getPosXTile()-rayon; x < m.getPosXTile() + rayon; x++){
-            for(int y = m.getPosYTile()-rayon; y < m.getPosYTile() + rayon; y++){
-                if(x < 0 || x > this.objetsCarte.length) continue;
-                if(y < 0 || y > objetsCarte[x].length) continue;
+        for(int x = m.getPosXTile(true)-rayon; x < m.getPosXTile(true) + rayon; x++){
+            for(int y = m.getPosYTile(true)-rayon; y < m.getPosYTile(true) + rayon; y++){
+                if(x < 0 || x >= this.objetsCarte.length) continue;
+                if(y < 0 || y >= objetsCarte[x].length) continue;
 
                 if(objetsCarte[x][y] != null) {
                     if (t == null || objetsCarte[x][y].hasTag(t)) {
@@ -137,6 +143,20 @@ public class Map {
             }
         }
         return mov;
+    }
+    public ArrayList<Item> getItemsAround(Movable m, int rayon){
+        ArrayList<Item> item = new ArrayList<>();
+        for(int x = m.getPosXTile(true)-rayon; x < m.getPosXTile(true) + rayon; x++){
+            for(int y = m.getPosYTile(true)-rayon; y < m.getPosYTile(true) + rayon; y++){
+                if(x < 0 || x >= this.items.length) continue;
+                if(y < 0 || y >= items[x].length) continue;
+
+                if(items[x][y] != null) {
+                        item.add(items[x][y]);
+                }
+            }
+        }
+        return item;
     }
 
     public Movable[][] getObjetsCarte() {
@@ -163,5 +183,13 @@ public class Map {
             }
         }
         return mov;
+    }
+
+    public Item getItems(int x, int y) {
+        return items[x][y];
+    }
+
+    public void setItems(Item i, int x, int y) {
+        this.items[x][y] = i;
     }
 }

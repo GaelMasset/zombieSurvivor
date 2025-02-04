@@ -61,7 +61,7 @@ import java.util.Random;
                 }
             }
 
-            ajouterMurs(carte, context);
+            ajouterMurs(carte);
             ajouterSpawnPoint(carte, context);
 
             String[] cheminsDeco = {"example_tile_deco_herbe", "example_tile_deco_fleur", "example_tile_deco_roche"};
@@ -88,20 +88,28 @@ import java.util.Random;
         }
 
         // Fonction pour ajouter des murs autour des îles
-        private static void ajouterMurs(TypeTile[][] carte, Context context) {
-            for (int x = 1; x < LARGEUR_CARTE - 1; x++) {
-                for (int y = 1; y < HAUTEUR_CARTE - 1; y++) {
+        private static void ajouterMurs(TypeTile[][] carte) {
+            for (int x = 1; x < LARGEUR_CARTE-1; x++) {
+                for (int y = 1; y < HAUTEUR_CARTE-1; y++) {
                     if (carte[x][y] == TypeTile.SOL) {
-                        // Vérifier les cases voisines (haut, bas, gauche, droite) pour l'eau
-                        boolean haut = carte[x][y - 1] == TypeTile.VIDE;
-                        boolean bas = carte[x][y + 1] == TypeTile.VIDE;
-                        boolean gauche = carte[x - 1][y] == TypeTile.VIDE;
-                        boolean droite = carte[x + 1][y] == TypeTile.VIDE;
+                        boolean haut, bas, gauche, droite, haut_gauche, haut_droite, bas_gauche, bas_droite;
+                        if(x == LARGEUR_CARTE-2) droite = true;
+                        else droite = carte[x + 1][y] == TypeTile.VIDE;
+                        if(x == 1) gauche = true;
+                        else gauche = carte[x - 1][y] == TypeTile.VIDE;
+                        if(y == 1) haut = true;
+                        else haut = carte[x][y - 1] == TypeTile.VIDE;
+                        if(y == HAUTEUR_CARTE-2) bas = true;
+                        else bas = carte[x][y + 1] == TypeTile.VIDE;
+                        if(x == LARGEUR_CARTE-2 && y == HAUTEUR_CARTE-2) haut_droite = true;
+                        else haut_droite = carte[x + 1][y - 1] == TypeTile.VIDE;  // Coin haut-droit
+                        if(x == 1 && y == HAUTEUR_CARTE-2) haut_gauche = true;
+                        else haut_gauche = carte[x - 1][y - 1] == TypeTile.VIDE;  // Coin haut-gauche
+                        if(x == LARGEUR_CARTE-2 && y == 1) bas_droite = true;
+                        else bas_droite = carte[x + 1][y + 1] == TypeTile.VIDE;
+                        if(x == 1 && y == 1) bas_gauche = true;
+                        else bas_gauche = carte[x - 1][y + 1] == TypeTile.VIDE;
 
-                        boolean haut_gauche = carte[x - 1][y - 1] == TypeTile.VIDE;  // Coin haut-gauche
-                        boolean haut_droite = carte[x + 1][y - 1] == TypeTile.VIDE;  // Coin haut-droit
-                        boolean bas_gauche = carte[x - 1][y + 1] == TypeTile.VIDE;  // Coin bas-gauche
-                        boolean bas_droite = carte[x + 1][y + 1] == TypeTile.VIDE;  // Coin bas-droit
 
                         String cheminImage = "example_tile";
                         carte[x][y] = TypeTile.BORDURE;
@@ -160,26 +168,9 @@ import java.util.Random;
                             objetsCarte[x][y].addTag(Tag.SOLIDE);
                         }
                     }
-                    /*LE BROUILLARD
-                    if(x==1 && y == 1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_topleft", true, 100, 999, 999));
-                    else if(x == 1 && y == HAUTEUR_CARTE-1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_bottomleft", true, 100, 999, 999));
-                    else if(x == LARGEUR_CARTE-1 && y == 1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_topright", true, 100, 999, 999));
-                    else if(x == LARGEUR_CARTE-1 && y == HAUTEUR_CARTE-1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_bottomright", true, 100, 999, 999));
-
-                    else if(y == 1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_top", true, 100, 999, 999));
-                    else if(x == 1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_left", true, 100, 999, 999));
-                    else if(x == LARGEUR_CARTE-1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_right", true, 100, 999, 999));
-                    else if(x == HAUTEUR_CARTE-1) obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard_bottom", true, 100, 999, 999));
-
-                    //FIN LE BROUILLARD*/
                 }
             }
-            /*//GROS BROUILLARD AU DESSUS
-            for(int x = 1; x < LARGEUR_CARTE; x++){
-                for(int y = -5; y <= 0; y++){
-                    obstacles.add(new Obstacle(context, x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0,  "brouillard", true, 100, 999, 999));
-                }
-            }*/
+
         }
 
         private static void ajouterDecorations(TypeTile[][] carte, Context context, String[] cheminsDeco) {
@@ -198,6 +189,7 @@ import java.util.Random;
                             int xPos = x * TAILLE_CASE;
                             int yPos = y * TAILLE_CASE;
                             objetsCarte[x][y] = new Obstacle(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0, cheminDeco, true, 100, 0, 0);
+                            objetsCarte[x][y].addTag(Tag.DECORATION);
                         }
                     }
                 }

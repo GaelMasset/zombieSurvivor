@@ -106,4 +106,8 @@ public abstract class Item extends Movable{
     public void drawIcone(Canvas canvas, double x, double y, double tailleX, double tailleY){
         canvas.drawBitmap(Bitmap.createScaledBitmap(icone, (int) tailleX, (int) tailleY, false), (float) x, (float) y, null);
     }
+
+    public void drop() {
+        Game.getPartie().getCarte().setItems(this, this.getPosXTile(true), this.getPosYTile(true));
+    }
 }

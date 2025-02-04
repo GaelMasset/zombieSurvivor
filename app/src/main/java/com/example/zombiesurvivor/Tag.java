@@ -1,5 +1,5 @@
 package com.example.zombiesurvivor;
 
 public enum Tag {
-    SOLIDE,
+    SOLIDE, DECORATION, PLAYER
 }

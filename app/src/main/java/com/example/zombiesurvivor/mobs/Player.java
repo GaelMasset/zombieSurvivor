@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class Player extends Mob {
     private static final int NB_SLOT_HOTBAR = 4;
     private static final int NB_SLOT_INVENTORY = 24;
-    private static final double MAX_SPEEED = 0.2;
+    private static final double MAX_SPEEED = 0.4;
     private Inventory hotbar = new Inventory(NB_SLOT_HOTBAR);
     private Inventory inventory = new Inventory(NB_SLOT_INVENTORY);
     private int mana;
@@ -40,6 +40,7 @@ public class Player extends Mob {
         this.joyStickArme = joystickAttaque;
         this.maxMana = manaMax;
         this.mana = manaMax;
+        this.addTag(Tag.PLAYER);
 
     }
 

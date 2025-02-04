@@ -13,6 +13,7 @@ public class Ray {
     private float length;     // Longueur (portée) du rayon
     private float maxlength;
     private Paint paint;
+    private ArrayList<Movable> encounteredMovable = new ArrayList<>();
 
     // Constructeur
     public Ray(float startX, float startY, float angle, float length) {
@@ -99,5 +100,15 @@ public class Ray {
 
     public float getMaxLength() {
         return maxlength;
+    }
+
+    public void addEncounteredMovable(Movable movable) {
+        this.encounteredMovable.add(movable);
+    }
+    public void emptyEncounteredMovable(){
+        encounteredMovable.clear();
+    }
+    public ArrayList<Movable> getEncounteredMovable(){
+        return encounteredMovable;
     }
 }
