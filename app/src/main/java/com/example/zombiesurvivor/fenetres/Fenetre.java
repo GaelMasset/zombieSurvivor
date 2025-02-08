@@ -4,10 +4,10 @@ import android.graphics.Canvas;
 import android.view.MotionEvent;
 
 import com.example.zombiesurvivor.Base.Page;
-import com.example.zombiesurvivor.Floor;
+import com.example.zombiesurvivor.Movable;
 
 public abstract class Fenetre {
-    protected Floor fond;
+    protected Movable fond;
     protected final Page page;
 
     public Fenetre(Page p){

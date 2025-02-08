@@ -10,7 +10,7 @@ import android.util.LruCache;
 
 import java.util.ArrayList;
 
-public abstract class Movable implements Cloneable {
+public class Movable implements Cloneable {
 
     final Context context;
     protected double posX;
@@ -21,6 +21,10 @@ public abstract class Movable implements Cloneable {
     public double enfoncementBottom;
     public double enfoncementLeft;
     public double enfoncementRight;
+    protected double depassementTop;
+    protected double depassementBottom;
+    protected double depasssementLeft;
+    protected double depassementRight;
     protected String cheminImages;
     protected boolean isAnimating;
     protected int timeCentiBetweenFrame;
@@ -73,6 +77,45 @@ public abstract class Movable implements Cloneable {
             }
         }
     }
+    public Movable(Context context, double posX, double posY, int tailleX, int tailleY,
+                   String cheminImages, boolean isAnimating, int timeCentiBetweenFrame,
+                   double enfoncementTop, double enfoncementBottom,
+                   double enfoncementLeft, double enfoncementRight,
+                   double depasssementTop, double depassementBottom,
+                   double depassementLeft, double depassementRight) {
+        this.context = context;
+        this.posX = posX;
+        this.posY = posY;
+        this.tailleX = tailleX;
+        this.tailleY = tailleY;
+        this.cheminImages = cheminImages;
+        this.isAnimating = isAnimating;
+        this.timeCentiBetweenFrame = timeCentiBetweenFrame;
+        this.enfoncementTop = enfoncementTop;
+        this.enfoncementBottom = enfoncementBottom;
+        this.enfoncementLeft = enfoncementLeft;
+        this.enfoncementRight = enfoncementRight;
+        this.depassementBottom = depassementBottom;
+        this.depassementRight = depassementRight;
+        this.depassementTop = depasssementTop;
+        this.depasssementLeft = depassementLeft;
+
+        // Chargement et mise en cache des images
+        int i = 1;
+        boolean moreImg = true;
+        while (moreImg) {
+            int resId = context.getResources().getIdentifier(cheminImages + i, "drawable", context.getPackageName());
+            if (resId != 0) {
+                String imageName = cheminImages + i; // Nom unique pour chaque image
+                Bitmap bitmap = loadBitmap(imageName, resId, (int)(tailleX+depasssementLeft+depassementRight), (int) (tailleY+depassementBottom+depasssementTop));
+                images.add(bitmap);
+                i++;
+            } else {
+                moreImg = false;
+            }
+        }
+    }
+
 
     /*
     Cache methods
@@ -169,7 +212,8 @@ public abstract class Movable implements Cloneable {
     Methods
      */
     public void draw(Canvas canvas) {
-        canvas.drawBitmap(images.get(currentCentiFrame / timeCentiBetweenFrame), (float) posX, (float) posY, null);
+        canvas.drawBitmap(images.get(currentCentiFrame / timeCentiBetweenFrame), (float) ((float) posX-depasssementLeft),
+                (float) ((float) posY-depassementTop), null);
     }
 
     public void update() {
@@ -249,5 +293,9 @@ public abstract class Movable implements Cloneable {
     }
     public boolean hasTag(Tag t){
         return tags.contains(t);
+    }
+
+    public void removeTag(Tag tag) {
+        if(this.hasTag(tag)) tags.remove(tag);
     }
 }

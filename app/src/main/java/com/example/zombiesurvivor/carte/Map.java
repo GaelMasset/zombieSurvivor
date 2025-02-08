@@ -2,23 +2,20 @@ package com.example.zombiesurvivor.carte;
 
 import static com.example.zombiesurvivor.carte.GenerateurNiveau.HAUTEUR_CARTE;
 import static com.example.zombiesurvivor.carte.GenerateurNiveau.LARGEUR_CARTE;
+import static com.example.zombiesurvivor.carte.GenerateurNiveau.TAILLE_CASE;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-import com.example.zombiesurvivor.Floor;
 import com.example.zombiesurvivor.Game;
-import com.example.zombiesurvivor.Image;
 import com.example.zombiesurvivor.Item;
 import com.example.zombiesurvivor.Movable;
-import com.example.zombiesurvivor.Obstacle;
 import com.example.zombiesurvivor.Tag;
-import com.example.zombiesurvivor.mobs.Mob;
+import com.example.zombiesurvivor.mobs.Player;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Map {
     private Item[][] items;
@@ -46,21 +43,20 @@ public class Map {
 
         for (int i = 0; i < hauteur; i ++) {
             for (int j = 0; j < longueur; j ++) {
-                TypeTile tile = typeTiles[j][i];
-
-                switch (tile) {
-                    case SOL:
-                        paint.setColor(Color.parseColor("#9ddc91")); // Vert clair pour le sol
-                        break;
-                    case VIDE:
-                        paint.setColor(Color.parseColor("#adaee7")); // Bleu clair pour le vide
-                        break;
-                    case BORDURE:
-                        paint.setColor(Color.parseColor("#8d6941")); // Marron pour les bordures
-                        break;
-                    default:
-                        paint.setColor(Color.parseColor("#FFFFFF")); // Blanc par défaut
-                        break;
+                if(objetsCarte[j][i] == null){
+                    paint.setColor(Color.parseColor("#adaee7"));
+                }else if(objetsCarte[j][i].getTags().contains(Tag.ARBRE)){
+                    paint.setColor(Color.parseColor("#7a2e0d"));
+                } else if(objetsCarte[j][i].getTags().contains(Tag.DONJON)){
+                    paint.setColor(Color.parseColor("#2fa3b5"));
+                }else if(objetsCarte[j][i].getTags().contains(Tag.DECORATION)){
+                    paint.setColor(Color.parseColor("#568c54"));
+                }else if(objetsCarte[j][i].getTags().contains(Tag.SOLIDE)){
+                    paint.setColor(Color.parseColor("#8d6941"));
+                }else if(objetsCarte[j][i].getTags().contains(Tag.SOL)){
+                    paint.setColor(Color.parseColor("#9ddc91"));
+                } else{
+                    paint.setColor(Color.parseColor("#adaee7"));
                 }
 
                 float caseLeft = (float) (left + j * longueurCase);
@@ -103,10 +99,25 @@ public class Map {
 
 
     public void update() {
-
+        for(Movable m: this.getMovablesAround(Game.getPartie().getJoueur(), 8, null)){
+            m.update();
+        }
+        for(Item i: getItemsAround(Game.getPartie().getJoueur(), 8)){
+            i.update();
+        }
     }
     public void draw(Canvas canvas) {
+        Player j = Game.getPartie().getJoueur();
+        ArrayList<Movable> movablesDessusJoueur = new ArrayList<>();
         for(Movable m: this.getMovablesAround(Game.getPartie().getJoueur(), 8, null)){
+            if(m.getPosY()+ m.enfoncementTop >= j.getPosY()+j.getTailleY()){
+                movablesDessusJoueur.add(m);
+            } else{
+                m.draw(canvas);
+            }
+        }
+        j.draw(canvas);
+        for(Movable m: movablesDessusJoueur){
             m.draw(canvas);
         }
         for(Item i: getItemsAround(Game.getPartie().getJoueur(), 8)){
@@ -166,20 +177,20 @@ public class Map {
         this.objetsCarte[x][y] = mov;
     }
 
-    public ArrayList<Floor> getFloors() {
-        ArrayList<Floor> mov = new ArrayList<>();
+    public ArrayList<Movable> getFloors() {
+        ArrayList<Movable> mov = new ArrayList<>();
         for(int x = 0; x < this.objetsCarte.length; x++){
             for(int y = 0; y < this.objetsCarte[x].length; y++){
-                if(objetsCarte[x][y] != null && objetsCarte[x][y] instanceof Floor) mov.add((Floor) objetsCarte[x][y]);
+                if(objetsCarte[x][y] != null && objetsCarte[x][y].hasTag(Tag.SOL)) mov.add(objetsCarte[x][y]);
             }
         }
         return mov;
     }
-    public ArrayList<Obstacle> getObstacles() {
-        ArrayList<Obstacle> mov = new ArrayList<>();
+    public ArrayList<Movable> getObstacles() {
+        ArrayList<Movable> mov = new ArrayList<>();
         for(int x = 0; x < this.objetsCarte.length; x++){
             for(int y = 0; y < this.objetsCarte[x].length; y++){
-                if(objetsCarte[x][y] != null && objetsCarte[x][y] instanceof Obstacle) mov.add((Obstacle) objetsCarte[x][y]);
+                if(objetsCarte[x][y] != null && objetsCarte[x][y].hasTag(Tag.SOLIDE)) mov.add(objetsCarte[x][y]);
             }
         }
         return mov;

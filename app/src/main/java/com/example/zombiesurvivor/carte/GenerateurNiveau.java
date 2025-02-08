@@ -2,13 +2,11 @@ package com.example.zombiesurvivor.carte;
 
 import android.content.Context;
 
-import com.example.zombiesurvivor.Floor;
 import com.example.zombiesurvivor.Game;
 import com.example.zombiesurvivor.Movable;
-import com.example.zombiesurvivor.Obstacle;
 import com.example.zombiesurvivor.Tag;
+import com.example.zombiesurvivor.donjon.Donjon;
 
-import java.util.ArrayList;
 import java.util.Random;
 
     public class GenerateurNiveau {
@@ -26,7 +24,6 @@ import java.util.Random;
         private static Movable[][] objetsCarte = new Movable[LARGEUR_CARTE][HAUTEUR_CARTE];
 
         public static Map genererCarte(Context context) {
-            ArrayList<Obstacle> brouillards = new ArrayList<>();
             Random random = new Random();
 
             // Initialisation du bruit de Perlin
@@ -64,8 +61,10 @@ import java.util.Random;
             ajouterMurs(carte);
             ajouterSpawnPoint(carte, context);
 
-            String[] cheminsDeco = {"example_tile_deco_herbe", "example_tile_deco_fleur", "example_tile_deco_roche"};
+            String[] cheminsDeco = {"example_tile_deco_herbe", "example_tile_deco_fleur",
+                    "example_tile_deco_herbe_moins", "example_tile_deco_fleur_moins"};
             ajouterDecorations(carte, context, cheminsDeco);
+            ajouterDonjon(carte, 15, 1);
 
             // Créer et retourner la carte avec les tuiles générées
             Map m = new Map(objetsCarte);
@@ -78,8 +77,9 @@ import java.util.Random;
                 for(int j = HAUTEUR_CARTE/2; j > 0; j--){
                     if(carte[i][j] == TypeTile.SOL){
                         carte[i][j] = TypeTile.PLAYERSPAWN;
-                        objetsCarte[i][j] = new Floor(context,
-                                i*TAILLE_CASE, j*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, "spawnpoint", true, 80, 0, 0, 0, 0);
+                        objetsCarte[i][j] = new Movable(context,
+                                i*TAILLE_CASE, j*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, "spawnpoint", true,
+                                80, 0, 0, 0, 0);
                         Game.getPartie().getJoueur().setSpawnPoint(i*TAILLE_CASE, j*TAILLE_CASE);
                         return;
                     }
@@ -102,9 +102,9 @@ import java.util.Random;
                         if(y == HAUTEUR_CARTE-2) bas = true;
                         else bas = carte[x][y + 1] == TypeTile.VIDE;
                         if(x == LARGEUR_CARTE-2 && y == HAUTEUR_CARTE-2) haut_droite = true;
-                        else haut_droite = carte[x + 1][y - 1] == TypeTile.VIDE;  // Coin haut-droit
+                        else haut_droite = carte[x + 1][y - 1] == TypeTile.VIDE;
                         if(x == 1 && y == HAUTEUR_CARTE-2) haut_gauche = true;
-                        else haut_gauche = carte[x - 1][y - 1] == TypeTile.VIDE;  // Coin haut-gauche
+                        else haut_gauche = carte[x - 1][y - 1] == TypeTile.VIDE;
                         if(x == LARGEUR_CARTE-2 && y == 1) bas_droite = true;
                         else bas_droite = carte[x + 1][y + 1] == TypeTile.VIDE;
                         if(x == 1 && y == 1) bas_gauche = true;
@@ -114,15 +114,14 @@ import java.util.Random;
                         String cheminImage = "example_tile";
                         carte[x][y] = TypeTile.BORDURE;
 
-                        // Détection des murs de coin (externes)
                         if (haut && gauche) {
-                            cheminImage = "example_tile_mur_coin_haut_gauche";  // Coin externe haut-gauche
+                            cheminImage = "example_tile_mur_coin_haut_gauche";
                         } else if (haut && droite) {
-                            cheminImage = "example_tile_mur_coin_haut_droit";   // Coin externe haut-droit
+                            cheminImage = "example_tile_mur_coin_haut_droit";
                         } else if (bas && gauche) {
-                            cheminImage = "example_tile_mur_coin_bas_gauche";   // Coin externe bas-gauche
+                            cheminImage = "example_tile_mur_coin_bas_gauche";
                         } else if (bas && droite) {
-                            cheminImage = "example_tile_mur_coin_bas_droit";    // Coin externe bas-droit
+                            cheminImage = "example_tile_mur_coin_bas_droit";
                         }
 
 
@@ -152,20 +151,21 @@ import java.util.Random;
                         int xPos = x * TAILLE_CASE;
                         int yPos = y * TAILLE_CASE;
                         if(carte[x][y] == TypeTile.VIDE){
-
-                            objetsCarte[x][y] = new Floor(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
+                            objetsCarte[x][y] = new Movable(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
                                     , "example_tile_vide", true, 100,
                                     0, 0, 0, 0);
+                            objetsCarte[x][y].removeTag(Tag.SOL);
                         } else if(carte[x][y] == TypeTile.SOL){
-                            objetsCarte[x][y] = new Floor(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
+                            objetsCarte[x][y] = new Movable(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
                                     , "example_tile", true, 100,
                                     0, 0, 0, 0);
+                            objetsCarte[x][y].addTag(Tag.SOL);
                         } else if(carte[x][y] == TypeTile.BORDURE){
-                            objetsCarte[x][y] = new Floor(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
+                            objetsCarte[x][y] = new Movable(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
                                     , cheminImage, true, 100,
                                     0, 0, 0, 0);
-
                             objetsCarte[x][y].addTag(Tag.SOLIDE);
+                            objetsCarte[x][y].removeTag(Tag.SOL);
                         }
                     }
                 }
@@ -175,25 +175,117 @@ import java.util.Random;
 
         private static void ajouterDecorations(TypeTile[][] carte, Context context, String[] cheminsDeco) {
             Random random = new Random();
+            PerlinNoise perlin = new PerlinNoise(random);
+            float pertub = 0.2f;
+
+            ajouterArbres(context);
 
             for (int x = 0; x < LARGEUR_CARTE; x++) {
                 for (int y = 0; y < HAUTEUR_CARTE; y++) {
-                    // Vérifier si la case actuelle est du sol, car on ne veut pas mettre de déco sur de l'eau ou une bordure
-                    if (carte[x][y] == TypeTile.SOL) {
-                        // Générer un nombre aléatoire entre 0 et 99, 5% de chance d'ajouter une décoration
-                        if (random.nextInt(100) < 5) {
-                            // Choisir un chemin de décoration au hasard
-                            String cheminDeco = cheminsDeco[random.nextInt(cheminsDeco.length)];
-
-                            // Ajouter la décoration comme un obstacle
+                    if(perlin.getNoise(x*pertub, y*pertub) > 0.2f){
+                        if (carte[x][y] == TypeTile.SOL) {
+                            int rand = random.nextInt(100);
+                            String cheminDeco = "";
+                            if(rand < 20) cheminDeco = cheminsDeco[0];
+                            else cheminDeco = cheminsDeco[1];
                             int xPos = x * TAILLE_CASE;
                             int yPos = y * TAILLE_CASE;
-                            objetsCarte[x][y] = new Obstacle(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, 0, 0, 0, 0, cheminDeco, true, 100, 0, 0);
+                            carte[x][y] = TypeTile.DECO;
+                            objetsCarte[x][y] = new Movable(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, cheminDeco, true, 100, 0, 0, 0, 0);
                             objetsCarte[x][y].addTag(Tag.DECORATION);
                         }
                     }
                 }
             }
         }
+
+        private static void ajouterArbres(Context context) {
+            Random random = new Random();
+            PerlinNoise perlin = new PerlinNoise(random);
+            float pertub = 0.5f;
+
+            for (int x = 0; x < LARGEUR_CARTE; x++) {
+                for (int y = 0; y < HAUTEUR_CARTE; y++) {
+                    if(perlin.getNoise(x*pertub, y*pertub) > 0.3f){
+                        if (objetsCarte[x][y] != null && objetsCarte[x][y].hasTag(Tag.SOL)) {
+                            System.out.println("AJOUT ARBRE");
+                            int xPos = x * TAILLE_CASE;
+                            int yPos = y * TAILLE_CASE;
+                            objetsCarte[x][y] = new Movable(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, "example_tree"
+                                    , true, 100,
+                                    TAILLE_CASE*0.75, 0, 0, 0,
+                                    TAILLE_CASE,0,0,0);
+                            objetsCarte[x][y].addTag(Tag.ARBRE);
+                            objetsCarte[x][y].addTag(Tag.SOLIDE);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void ajouterDonjon(TypeTile[][] carte, int nbDonjon, int taille) {
+            Random random = new Random();
+            int maxAttempts = 1000;
+            while (nbDonjon > 0 && maxAttempts > 0) {
+                int x = random.nextInt(LARGEUR_CARTE);
+                int y = random.nextInt(HAUTEUR_CARTE);
+                if (zoneLibre(x, y, taille)) {
+                    transformTile(x, y, taille, TypeTile.DONJON, carte);
+                    nbDonjon--;
+                }
+                maxAttempts--;  // Diminue le compteur d'essais
+            }
+        }
+
+
+
+        public static boolean zoneLibre(int x, int y, int radius){
+            if (x < radius || y < radius || x >= LARGEUR_CARTE - radius || y >= HAUTEUR_CARTE - radius) {
+                return false;  // Empêche de placer un donjon sur les bords de la carte
+            }
+
+            for (int i = -radius; i <= radius; i++) {
+                for (int j = -radius; j <= radius; j++) {
+                    int xi = x + i;
+                    int yj = y + j;
+
+                    if (xi < 0 || yj < 0 || xi >= LARGEUR_CARTE || yj >= HAUTEUR_CARTE)
+                        return false;  // Sécurité pour éviter un dépassement d'index
+
+                    if (objetsCarte[xi][yj] == null || !objetsCarte[xi][yj].hasTag(Tag.SOL))
+                        return false;  // Vérifie qu'il n'y a pas d'obstacle
+                }
+            }
+
+            return true;
+        }
+
+        public static void transformTile(int x, int y, int radius, TypeTile typeTile, TypeTile[][] carte) {
+            // Création du donjon avec une taille fixe 3x3
+            Donjon dj = new Donjon(3, 3, "example_dungeon_", x - radius, y - radius);
+
+            // Parcourir la zone du donjon
+            for (int i = 0; i < 3; i++) {   // Itérer sur les lignes du donjon
+                for (int j = 0; j < 3; j++) { // Itérer sur les colonnes du donjon
+                    int xi = x + (i - 1);  // Centrer le donjon sur (x, y)
+                    int yj = y + (j - 1);
+
+                    if (xi >= 0 && yj >= 0 && xi < LARGEUR_CARTE && yj < HAUTEUR_CARTE) {
+                        carte[yj][xi] = typeTile;
+                        objetsCarte[yj][xi] = dj.getTile(i * 3 + j);
+
+                        if (objetsCarte[yj][xi] != null) {
+                            objetsCarte[yj][xi].removeTag(Tag.SOL);
+                            objetsCarte[yj][xi].addTag(Tag.DONJON);
+
+                            objetsCarte[yj][xi].setPosX(yj * TAILLE_CASE);
+                            objetsCarte[yj][xi].setPosY(xi * TAILLE_CASE);
+                        }
+                    }
+                }
+            }
+        }
+
+
 
     }

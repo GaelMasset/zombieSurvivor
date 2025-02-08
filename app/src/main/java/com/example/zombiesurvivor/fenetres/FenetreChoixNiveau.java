@@ -13,8 +13,8 @@ import android.widget.Button;
 
 import com.example.zombiesurvivor.Base.Page;
 import com.example.zombiesurvivor.Bouton;
-import com.example.zombiesurvivor.Floor;
 import com.example.zombiesurvivor.Image;
+import com.example.zombiesurvivor.Movable;
 import com.example.zombiesurvivor.PixelText;
 import com.example.zombiesurvivor.map.IleDescriptor;
 
@@ -27,8 +27,7 @@ public class FenetreChoixNiveau extends Fenetre{
 
     public FenetreChoixNiveau(Page p) {
         super(p);
-        fond = new Floor(p.getContext(), 0,0,canvasWidth,canvasHeight,"mapchoose_background", true, 100, 0, 0, 0, 0);
-
+        fond = new Movable(p.getContext(), 0,0,canvasWidth,canvasHeight,"mapchoose_background", true, 100, 0, 0, 0, 0);
         iles.add(new IleDescriptor(
                 new PixelText(p.getContext(), "accueil", pourcentLongueur(123.0/3), pourcentHauteur(39.0/1.5), pourcentHauteur(10.0/1.5),pourcentLongueur(0.18) ,true),
                 new Bouton(p.getContext(), pourcentLongueur(32.0/3), pourcentHauteur(51.0/1.5), (int) pourcentLongueur(35.0/3), (int) pourcentHauteur(51.0/1.5), "mapchoose_ile1_","mapchoose_ile", true, 80),

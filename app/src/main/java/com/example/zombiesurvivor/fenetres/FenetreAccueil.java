@@ -4,16 +4,16 @@ import static com.example.zombiesurvivor.Base.MainActivity.*;
 
 import android.graphics.Canvas;
 import android.view.MotionEvent;
-
 import com.example.zombiesurvivor.Base.Page;
 import com.example.zombiesurvivor.Bouton;
-import com.example.zombiesurvivor.Floor;
 import com.example.zombiesurvivor.Image;
+import com.example.zombiesurvivor.Movable;
 import com.example.zombiesurvivor.PixelText;
+import com.example.zombiesurvivor.Tag;
 import com.example.zombiesurvivor.compte.Compte;
 
 public class FenetreAccueil extends Fenetre {
-    private Floor fond;
+    private Movable fond;
     private Bouton boutonStartGame;
     private Bouton ballon;
     private Image hudJoueur;
@@ -30,7 +30,7 @@ public class FenetreAccueil extends Fenetre {
     public FenetreAccueil(Page p) {
         super(p);
 
-        fond = new Floor(p.getContext(), 0,0,canvasWidth,canvasHeight,"background_accueil", true, 100, 0, 0, 0, 0);
+        fond = new Movable(p.getContext(), 0,0,canvasWidth,canvasHeight,"background_accueil", true, 100, 0, 0, 0, 0);
         boutonStartGame = new Bouton(p.getContext(),pourcentLongueur(94.0/3) ,  0, (int) pourcentLongueur(103.0/3), canvasHeight, "background_accueil_ile","background_accueil_ile", true, 80);
         ballon = new Bouton(p.getContext(),pourcentLongueur(198/3) ,0 ,pourcentLongueur(93/3), canvasHeight, "background_accueil_ile_ballon","background_accueil_ile_ballon", true, 80);
 

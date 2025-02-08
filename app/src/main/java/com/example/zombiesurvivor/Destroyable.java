@@ -17,9 +17,6 @@ public abstract class Destroyable extends Movable{
         this.maxHp = maxHp;
     }
     public void damage(int hp){
-        if(this instanceof UndestroyableObstacle){
-            return;
-        }
         this.hp-=hp;
         if(this.hp<=0){
             destroy();

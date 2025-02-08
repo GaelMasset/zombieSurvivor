@@ -8,7 +8,7 @@ public class PerlinNoise {
     private int repeat;
 
     public PerlinNoise(Random random) {
-        repeat = 1024;
+        repeat = 4096;
         permutationTable = new int[repeat * 2];
         for (int i = 0; i < repeat; i++) {
             permutationTable[i] = i;

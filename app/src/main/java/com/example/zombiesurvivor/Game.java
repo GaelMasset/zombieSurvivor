@@ -49,7 +49,6 @@ public class Game {
     public void draw(Canvas canvas){
         canvas.translate(-camera.getPosX(), camera.getPosY());
         this.carte.draw(canvas);
-        this.joueur.draw(canvas);
 
         for(Bullet balle: balles){
             balle.draw(canvas);
