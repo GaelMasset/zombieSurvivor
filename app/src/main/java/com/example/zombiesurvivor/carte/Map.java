@@ -20,10 +20,10 @@ import java.util.ArrayList;
 public class Map {
     private Item[][] items;
     private TypeTile[][] typeTiles;
-    private Movable[][] objetsCarte;
+    private ArrayList<ArrayList<Movable>> objetsCarte;
     private Context context;
 
-    public Map(Movable[][] carte){
+    public Map(ArrayList<ArrayList<Movable>> carte){
         this.objetsCarte = carte;
     }
 
@@ -43,17 +43,17 @@ public class Map {
 
         for (int i = 0; i < hauteur; i ++) {
             for (int j = 0; j < longueur; j ++) {
-                if(objetsCarte[j][i] == null){
+                if(objetsCarte.get(j).get(i) == null){
                     paint.setColor(Color.parseColor("#adaee7"));
-                }else if(objetsCarte[j][i].getTags().contains(Tag.ARBRE)){
+                }else if(objetsCarte.get(j).get(i).getTags().contains(Tag.ARBRE)){
                     paint.setColor(Color.parseColor("#7a2e0d"));
-                } else if(objetsCarte[j][i].getTags().contains(Tag.DONJON)){
+                } else if(objetsCarte.get(j).get(i).getTags().contains(Tag.DONJON)){
                     paint.setColor(Color.parseColor("#2fa3b5"));
-                }else if(objetsCarte[j][i].getTags().contains(Tag.DECORATION)){
+                }else if(objetsCarte.get(j).get(i).getTags().contains(Tag.DECORATION)){
                     paint.setColor(Color.parseColor("#568c54"));
-                }else if(objetsCarte[j][i].getTags().contains(Tag.SOLIDE)){
+                }else if(objetsCarte.get(j).get(i).getTags().contains(Tag.SOLIDE)){
                     paint.setColor(Color.parseColor("#8d6941"));
-                }else if(objetsCarte[j][i].getTags().contains(Tag.SOL)){
+                }else if(objetsCarte.get(j).get(i).getTags().contains(Tag.SOL)){
                     paint.setColor(Color.parseColor("#9ddc91"));
                 } else{
                     paint.setColor(Color.parseColor("#adaee7"));
@@ -143,12 +143,12 @@ public class Map {
         ArrayList<Movable> mov = new ArrayList<Movable>();
         for(int x = m.getPosXTile(true)-rayon; x < m.getPosXTile(true) + rayon; x++){
             for(int y = m.getPosYTile(true)-rayon; y < m.getPosYTile(true) + rayon; y++){
-                if(x < 0 || x >= this.objetsCarte.length) continue;
-                if(y < 0 || y >= objetsCarte[x].length) continue;
+                if(x < 0 || x >= this.objetsCarte.size()) continue;
+                if(y < 0 || y >= objetsCarte.get(x).size()) continue;
 
-                if(objetsCarte[x][y] != null) {
-                    if (t == null || objetsCarte[x][y].hasTag(t)) {
-                        mov.add(objetsCarte[x][y]);
+                if(objetsCarte.get(x).get(y) != null) {
+                    if (t == null || objetsCarte.get(x).get(y).hasTag(t)) {
+                        mov.add(objetsCarte.get(x).get(y));
                     }
                 }
             }
@@ -170,27 +170,27 @@ public class Map {
         return item;
     }
 
-    public Movable[][] getObjetsCarte() {
+    public ArrayList<ArrayList<Movable>> getObjetsCarte() {
         return objetsCarte;
     }
     public void setObjetsCarte(int x, int y, Movable mov){
-        this.objetsCarte[x][y] = mov;
+        this.objetsCarte.get(x).set(y, mov);
     }
 
     public ArrayList<Movable> getFloors() {
         ArrayList<Movable> mov = new ArrayList<>();
-        for(int x = 0; x < this.objetsCarte.length; x++){
-            for(int y = 0; y < this.objetsCarte[x].length; y++){
-                if(objetsCarte[x][y] != null && objetsCarte[x][y].hasTag(Tag.SOL)) mov.add(objetsCarte[x][y]);
+        for(int x = 0; x < this.objetsCarte.size(); x++){
+            for(int y = 0; y < this.objetsCarte.get(x).size(); y++){
+                if(objetsCarte.get(x).get(y) != null && objetsCarte.get(x).get(y).hasTag(Tag.SOL)) mov.add(objetsCarte.get(x).get(y));
             }
         }
         return mov;
     }
     public ArrayList<Movable> getObstacles() {
         ArrayList<Movable> mov = new ArrayList<>();
-        for(int x = 0; x < this.objetsCarte.length; x++){
-            for(int y = 0; y < this.objetsCarte[x].length; y++){
-                if(objetsCarte[x][y] != null && objetsCarte[x][y].hasTag(Tag.SOLIDE)) mov.add(objetsCarte[x][y]);
+        for(int x = 0; x < this.objetsCarte.size(); x++){
+            for(int y = 0; y < this.objetsCarte.get(x).size(); y++){
+                if(objetsCarte.get(x).get(y) != null && objetsCarte.get(x).get(y).hasTag(Tag.SOLIDE)) mov.add(objetsCarte.get(x).get(y));
             }
         }
         return mov;

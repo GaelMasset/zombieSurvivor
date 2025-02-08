@@ -7,6 +7,7 @@ import com.example.zombiesurvivor.Movable;
 import com.example.zombiesurvivor.Tag;
 import com.example.zombiesurvivor.donjon.Donjon;
 
+import java.util.ArrayList;
 import java.util.Random;
 
     public class GenerateurNiveau {
@@ -21,10 +22,17 @@ import java.util.Random;
         private static final float PERTURBATION = 0.05f;  // L'influence du bruit pour des variations douces
 
         private static PerlinNoise perlinNoise;
-        private static Movable[][] objetsCarte = new Movable[LARGEUR_CARTE][HAUTEUR_CARTE];
+        private static ArrayList<ArrayList<Movable>> objetsCarte = new ArrayList<>();
 
         public static Map genererCarte(Context context) {
             Random random = new Random();
+            //Pour avoir la bonne longueur et des emplacements dans objetsCarte
+            for(int i = 0; i < LARGEUR_CARTE; i++){
+                objetsCarte.add(new ArrayList<>());
+                for(int j = 0; j < HAUTEUR_CARTE; j++){
+                    objetsCarte.get(i).add(null);
+                }
+            }
 
             // Initialisation du bruit de Perlin
             perlinNoise = new PerlinNoise(random);
@@ -77,9 +85,9 @@ import java.util.Random;
                 for(int j = HAUTEUR_CARTE/2; j > 0; j--){
                     if(carte[i][j] == TypeTile.SOL){
                         carte[i][j] = TypeTile.PLAYERSPAWN;
-                        objetsCarte[i][j] = new Movable(context,
+                        objetsCarte.get(i).set(j ,new Movable(context,
                                 i*TAILLE_CASE, j*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, "spawnpoint", true,
-                                80, 0, 0, 0, 0);
+                                80, 0, 0, 0, 0));
                         Game.getPartie().getJoueur().setSpawnPoint(i*TAILLE_CASE, j*TAILLE_CASE);
                         return;
                     }
@@ -151,21 +159,21 @@ import java.util.Random;
                         int xPos = x * TAILLE_CASE;
                         int yPos = y * TAILLE_CASE;
                         if(carte[x][y] == TypeTile.VIDE){
-                            objetsCarte[x][y] = new Movable(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
+                            objetsCarte.get(x).set(y, new Movable(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
                                     , "example_tile_vide", true, 100,
-                                    0, 0, 0, 0);
-                            objetsCarte[x][y].removeTag(Tag.SOL);
+                                    0, 0, 0, 0));
+                            objetsCarte.get(x).get(y).removeTag(Tag.SOL);
                         } else if(carte[x][y] == TypeTile.SOL){
-                            objetsCarte[x][y] = new Movable(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
+                            objetsCarte.get(x).set(y, new Movable(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
                                     , "example_tile", true, 100,
-                                    0, 0, 0, 0);
-                            objetsCarte[x][y].addTag(Tag.SOL);
+                                    0, 0, 0, 0));
+                            objetsCarte.get(x).get(y).addTag(Tag.SOL);
                         } else if(carte[x][y] == TypeTile.BORDURE){
-                            objetsCarte[x][y] = new Movable(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
+                            objetsCarte.get(x).set(y, new Movable(Game.getPartie().getContext(), x*TAILLE_CASE, y*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE
                                     , cheminImage, true, 100,
-                                    0, 0, 0, 0);
-                            objetsCarte[x][y].addTag(Tag.SOLIDE);
-                            objetsCarte[x][y].removeTag(Tag.SOL);
+                                    0, 0, 0, 0));
+                            objetsCarte.get(x).get(y).addTag(Tag.SOLIDE);
+                            objetsCarte.get(x).get(y).removeTag(Tag.SOL);
                         }
                     }
                 }
@@ -191,8 +199,8 @@ import java.util.Random;
                             int xPos = x * TAILLE_CASE;
                             int yPos = y * TAILLE_CASE;
                             carte[x][y] = TypeTile.DECO;
-                            objetsCarte[x][y] = new Movable(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, cheminDeco, true, 100, 0, 0, 0, 0);
-                            objetsCarte[x][y].addTag(Tag.DECORATION);
+                            objetsCarte.get(x).set(y, new Movable(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, cheminDeco, true, 100, 0, 0, 0, 0));
+                            objetsCarte.get(x).get(y).addTag(Tag.DECORATION);
                         }
                     }
                 }
@@ -207,16 +215,16 @@ import java.util.Random;
             for (int x = 0; x < LARGEUR_CARTE; x++) {
                 for (int y = 0; y < HAUTEUR_CARTE; y++) {
                     if(perlin.getNoise(x*pertub, y*pertub) > 0.3f){
-                        if (objetsCarte[x][y] != null && objetsCarte[x][y].hasTag(Tag.SOL)) {
+                        if (objetsCarte.get(x).get(y) != null && objetsCarte.get(x).get(y).hasTag(Tag.SOL)) {
                             System.out.println("AJOUT ARBRE");
                             int xPos = x * TAILLE_CASE;
                             int yPos = y * TAILLE_CASE;
-                            objetsCarte[x][y] = new Movable(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, "example_tree"
+                            objetsCarte.get(x).set(y, new Movable(context, xPos, yPos, TAILLE_CASE, TAILLE_CASE, "example_tree"
                                     , true, 100,
                                     TAILLE_CASE*0.75, 0, 0, 0,
-                                    TAILLE_CASE,0,0,0);
-                            objetsCarte[x][y].addTag(Tag.ARBRE);
-                            objetsCarte[x][y].addTag(Tag.SOLIDE);
+                                    TAILLE_CASE,0,0,0));
+                            objetsCarte.get(x).get(y).addTag(Tag.ARBRE);
+                            objetsCarte.get(x).get(y).addTag(Tag.SOLIDE);
                         }
                     }
                 }
@@ -252,7 +260,7 @@ import java.util.Random;
                     if (xi < 0 || yj < 0 || xi >= LARGEUR_CARTE || yj >= HAUTEUR_CARTE)
                         return false;  // Sécurité pour éviter un dépassement d'index
 
-                    if (objetsCarte[xi][yj] == null || !objetsCarte[xi][yj].hasTag(Tag.SOL))
+                    if (objetsCarte.get(xi).get(yj) == null || !objetsCarte.get(xi).get(yj).hasTag(Tag.SOL))
                         return false;  // Vérifie qu'il n'y a pas d'obstacle
                 }
             }
@@ -272,14 +280,14 @@ import java.util.Random;
 
                     if (xi >= 0 && yj >= 0 && xi < LARGEUR_CARTE && yj < HAUTEUR_CARTE) {
                         carte[yj][xi] = typeTile;
-                        objetsCarte[yj][xi] = dj.getTile(i * 3 + j);
+                        objetsCarte.get(yj).set(xi, dj.getTile(i * 3 + j));
 
-                        if (objetsCarte[yj][xi] != null) {
-                            objetsCarte[yj][xi].removeTag(Tag.SOL);
-                            objetsCarte[yj][xi].addTag(Tag.DONJON);
+                        if (objetsCarte.get(yj).get(xi) != null) {
+                            objetsCarte.get(yj).get(xi).removeTag(Tag.SOL);
+                            objetsCarte.get(yj).get(xi).addTag(Tag.DONJON);
 
-                            objetsCarte[yj][xi].setPosX(yj * TAILLE_CASE);
-                            objetsCarte[yj][xi].setPosY(xi * TAILLE_CASE);
+                            objetsCarte.get(yj).get(xi).setPosX(yj * TAILLE_CASE);
+                            objetsCarte.get(yj).get(xi).setPosY(xi * TAILLE_CASE);
                         }
                     }
                 }
