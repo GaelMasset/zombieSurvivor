@@ -18,8 +18,8 @@ public abstract class Item extends Movable{
     private Bitmap icone;
     private ArrayList<ArrayList<Bitmap>> animationsItem = new ArrayList<ArrayList<Bitmap>>();
 
-    public Item(Context context, double posX, double posY, int tailleX, int tailleY, String cheminImages, boolean isAnimating, int timeCentiBetweenFrame,int postUseAnimTime ,double enfoncementTop, double enfoncementBottom, double enfoncementLeft, double enfoncementRight, int timeCentiToUse, boolean isStackable, int tailleStack) {
-        super(context, posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight);
+    public Item(double posX, double posY, int tailleX, int tailleY, String cheminImages, boolean isAnimating, int timeCentiBetweenFrame,int postUseAnimTime ,double enfoncementTop, double enfoncementBottom, double enfoncementLeft, double enfoncementRight, int timeCentiToUse, boolean isStackable, int tailleStack) {
+        super(posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight);
         this.timeCentiToUse = timeCentiToUse;
         this.isStackable = isStackable;
         this.postUseAnimTime = postUseAnimTime;

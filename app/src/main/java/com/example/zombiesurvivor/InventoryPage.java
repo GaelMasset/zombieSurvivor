@@ -31,16 +31,16 @@ public class InventoryPage {
     public InventoryPage(){
         this.fond = new Image(Game.getPartie().getContext(), 0, 0, MainActivity.canvasWidth, MainActivity.canvasHeight,
                 "inventory_hud", 80);
-        this.icone = new Bouton(Game.getPartie().getContext(), pourcentLongueur(265.0/3), pourcentHauteur(5.0/1.5),
+        this.icone = new Bouton(pourcentLongueur(265.0/3), pourcentHauteur(5.0/1.5),
                 (int) pourcentLongueur(17.0/3), (int) pourcentHauteur(17.0/1.5), "inventory_icon_button",
                 "inventory_icon_button", true, 80);
-        this.closeButton = new Bouton(Game.getPartie().getContext(), pourcentLongueur(278.0/3), pourcentHauteur(5.0/1.5),
+        this.closeButton = new Bouton(pourcentLongueur(278.0/3), pourcentHauteur(5.0/1.5),
                 (int) pourcentLongueur(17.0/3), (int) pourcentHauteur(17.0/1.5), "inventory_close_button",
                 "inventory_close_button", true, 80);
         this.hudMap = new Image(Game.getPartie().getContext(), pourcentLongueur(8.0/3), pourcentHauteur(8.0/1.5),
                 (int) pourcentLongueur(81.0/3), (int) pourcentHauteur(81.0/1.5), "inventory_hud_map", 80);
         for(int i = 0; i < 12; i++) {
-            this.slotInventory[i] = new Bouton(Game.getPartie().getContext(), pourcentLongueur(100.0 / 3)+(i%4)*pourcentLongueur(26.0 / 3),
+            this.slotInventory[i] = new Bouton(pourcentLongueur(100.0 / 3)+(i%4)*pourcentLongueur(26.0 / 3),
                     pourcentHauteur(35.0 / 1.5) + (i/4) * pourcentHauteur(26.0 / 1.5),
                     (int) pourcentLongueur(22.0 / 3), (int) pourcentHauteur(22.0 / 1.5), "inventory_inventory_slot",
                     "inventory_inventory_slot_clicked", true, 80);
@@ -49,12 +49,12 @@ public class InventoryPage {
         double[] coX = {pourcentLongueur(241.0 / 3), pourcentLongueur(217.0 / 3), pourcentLongueur(266.0 / 3), pourcentLongueur(241.0 / 3)};
         double[] coY = {pourcentHauteur(73.0 / 1.5), pourcentHauteur(97.0 / 1.5), pourcentHauteur(97.0 / 1.5), pourcentHauteur(120.0 / 1.5)};
         for(int i = 0; i < 4; i++) {
-            slotHotbar[i] = new Bouton(Game.getPartie().getContext(),
+            slotHotbar[i] = new Bouton(
                     coX[i],coY[i],
                     (int) pourcentLongueur(22.0 / 3), (int) pourcentHauteur(22.0 / 1.5), "inventory_inventory_slot",
                     "inventory_inventory_slot_clicked", true, 80);
         }
-        trashIcon = new Bouton(Game.getPartie().getContext(), pourcentLongueur(142.0/3), pourcentHauteur(115.0/1.5),
+        trashIcon = new Bouton(pourcentLongueur(142.0/3), pourcentHauteur(115.0/1.5),
                 (int)pourcentLongueur(16.0/3), (int)pourcentHauteur(17.0/1.5),
                 "inventory_trash_icon", "inventory_trash_icon",
                 true, 100);

@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.zombiesurvivor"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -20,6 +20,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {

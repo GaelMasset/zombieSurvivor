@@ -33,9 +33,9 @@ public class Player extends Mob {
 
 
 
-    public Player(Context context, int posX, int posY, int tailleX, int tailleY, String floor, int maxHp,double enfoncementTop, double enfoncementBottom,
+    public Player(int posX, int posY, int tailleX, int tailleY, String floor, int maxHp,double enfoncementTop, double enfoncementBottom,
                   double enfoncementLeft, double enfoncementRight, boolean isAnimating, int timeCentiBetweenFrame, int hp, int manaMax, double speed, Joystick joystickDeplacement, Bouton joystickAttaque) {
-        super(context, posX, posY, tailleX, tailleY, floor,enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight, isAnimating, timeCentiBetweenFrame, hp , maxHp, speed);
+        super(posX, posY, tailleX, tailleY, floor,enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight, isAnimating, timeCentiBetweenFrame, hp , maxHp, speed);
         this.joyStickDeplacement = joystickDeplacement;
         this.joyStickArme = joystickAttaque;
         this.maxMana = manaMax;
@@ -53,55 +53,64 @@ public class Player extends Mob {
         double futurePosX = posX + joyStickDeplacement.actuatorX * speed * MAX_SPEEED;
         double futurePosY = posY + joyStickDeplacement.getActuatorY() * speed * MAX_SPEEED;
 
-        if(!(action == Action.WALKING_RIGHT || action == Action.WALKING_LEFT)) {
-            futurePosX -= (joyStickDeplacement.actuatorX * speed * MAX_SPEEED)/1.33;
-            futurePosY -= (joyStickDeplacement.getActuatorY() * speed * MAX_SPEEED)/1.33;
+        if (!(action == Action.WALKING_RIGHT || action == Action.WALKING_LEFT)) {
+            futurePosX -= (joyStickDeplacement.actuatorX * speed * MAX_SPEEED) / 1.33;
+            futurePosY -= (joyStickDeplacement.getActuatorY() * speed * MAX_SPEEED) / 1.33;
         }
-        ArrayList<Movable> obsAroundPlayer = Game.getPartie().getCarte().getMovablesAround(this, 4, Tag.SOLIDE);
+
+        ArrayList<Movable> obsAroundPlayer = new ArrayList<>();
+        for (ArrayList<Movable> liste : Game.getPartie().getCarte().getMovablesAround(this, 4, Tag.SOLIDE)) {
+            obsAroundPlayer.addAll(liste);
+        }
+
         ArrayList<Movable> obstacles = getAllGonnaTouchMovables(this, obsAroundPlayer,
-                    joyStickDeplacement.actuatorX * speed, joyStickDeplacement.getActuatorY() * speed);
+                joyStickDeplacement.actuatorX * speed, joyStickDeplacement.getActuatorY() * speed);
 
-            if (obstacles.isEmpty()) {
+        if (obstacles.isEmpty()) {
+            posX = futurePosX;
+            posY = futurePosY;
+            return true;
+        } else {
+            ArrayList<Movable> xObstacles = getAllGonnaTouchMovables(this, obsAroundPlayer,
+                    joyStickDeplacement.actuatorX * speed, 0);
+
+            ArrayList<Movable> yObstacles = getAllGonnaTouchMovables(this, obsAroundPlayer,
+                    0, joyStickDeplacement.getActuatorY() * speed);
+
+            double deltaX = 0;
+            double deltaY = 0;
+
+            if (xObstacles.isEmpty()) {
                 posX = futurePosX;
-                posY = futurePosY;
-                return true;
-            } else {
-                ArrayList<Movable> xObstacles = getAllGonnaTouchMovables(this, obsAroundPlayer,
-                        joyStickDeplacement.actuatorX * speed, 0);
-
-                ArrayList<Movable> yObstacles = getAllGonnaTouchMovables(this, obsAroundPlayer,
-                        0, joyStickDeplacement.getActuatorY() * speed);
-
-                double deltaX = 0;
-                double deltaY = 0;
-
-                if (xObstacles.isEmpty()) {
-                    posX = futurePosX;
-                } else if (joyStickDeplacement.actuatorX != 0) {
-                    Movable nearestX = findNearestObstacle(xObstacles, true);
-                    if (joyStickDeplacement.actuatorX > 0) {
-                        deltaX = nearestX.getPosX() + nearestX.enfoncementLeft - (posX + tailleX - enfoncementRight);
-                    } else {
-                        deltaX = (nearestX.getPosX() + nearestX.getTailleX() - nearestX.enfoncementRight) - (posX + enfoncementLeft);
-                    }
-                    posX += Math.abs(deltaX) < Math.abs(joyStickDeplacement.actuatorX * speed) ? deltaX : joyStickDeplacement.actuatorX * speed;
+            } else if (joyStickDeplacement.actuatorX != 0) {
+                Movable nearestX = findNearestObstacle(xObstacles, true);
+                if (joyStickDeplacement.actuatorX > 0) {
+                    deltaX = nearestX.getPosX() + nearestX.enfoncementLeft - nearestX.getDepassementLeft()
+                            - (posX + tailleX - enfoncementRight + depassementRight);
+                } else {
+                    deltaX = (nearestX.getPosX() + nearestX.getTailleX() - nearestX.enfoncementRight + nearestX.getDepassementRight())
+                            - (posX + enfoncementLeft - depassementLeft);
                 }
-
-                if (yObstacles.isEmpty()) {
-                    posY = futurePosY;
-                } else if (joyStickDeplacement.getActuatorY() != 0) {
-                    Movable nearestY = findNearestObstacle(yObstacles, false);
-                    if (joyStickDeplacement.getActuatorY() > 0) {
-                        deltaY = nearestY.getPosY() + nearestY.enfoncementTop - (posY + tailleY - enfoncementBottom);
-                    } else {
-                        deltaY = (nearestY.getPosY() + nearestY.getTailleY() - nearestY.enfoncementBottom) - (posY + enfoncementTop);
-                    }
-                    posY += Math.abs(deltaY) < Math.abs(joyStickDeplacement.getActuatorY() * speed) ? deltaY : joyStickDeplacement.getActuatorY() * speed;
-                }
+                posX += Math.abs(deltaX) < Math.abs(joyStickDeplacement.actuatorX * speed) ? deltaX : joyStickDeplacement.actuatorX * speed;
             }
-            return false;
 
+            if (yObstacles.isEmpty()) {
+                posY = futurePosY;
+            } else if (joyStickDeplacement.getActuatorY() != 0) {
+                Movable nearestY = findNearestObstacle(yObstacles, false);
+                if (joyStickDeplacement.getActuatorY() > 0) {
+                    deltaY = nearestY.getPosY() + nearestY.enfoncementTop - nearestY.getDepassementTop()
+                            - (posY + tailleY - enfoncementBottom + depassementBottom);
+                } else {
+                    deltaY = (nearestY.getPosY() + nearestY.getTailleY() - nearestY.enfoncementBottom + nearestY.getDepassementBottom())
+                            - (posY + enfoncementTop - depassementTop);
+                }
+                posY += Math.abs(deltaY) < Math.abs(joyStickDeplacement.getActuatorY() * speed) ? deltaY : joyStickDeplacement.getActuatorY() * speed;
+            }
+        }
+        return false;
     }
+
 
 
     private Movable findNearestObstacle(ArrayList<Movable> obstacles, boolean checkX) {

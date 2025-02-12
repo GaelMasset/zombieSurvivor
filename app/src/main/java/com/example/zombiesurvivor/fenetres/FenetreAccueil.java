@@ -6,10 +6,12 @@ import android.graphics.Canvas;
 import android.view.MotionEvent;
 import com.example.zombiesurvivor.Base.Page;
 import com.example.zombiesurvivor.Bouton;
+import com.example.zombiesurvivor.Game;
 import com.example.zombiesurvivor.Image;
 import com.example.zombiesurvivor.Movable;
 import com.example.zombiesurvivor.PixelText;
 import com.example.zombiesurvivor.Tag;
+import com.example.zombiesurvivor.carte.ListOfMovable;
 import com.example.zombiesurvivor.compte.Compte;
 
 public class FenetreAccueil extends Fenetre {
@@ -30,19 +32,24 @@ public class FenetreAccueil extends Fenetre {
     public FenetreAccueil(Page p) {
         super(p);
 
-        fond = new Movable(p.getContext(), 0,0,canvasWidth,canvasHeight,"background_accueil", true, 100, 0, 0, 0, 0);
-        boutonStartGame = new Bouton(p.getContext(),pourcentLongueur(94.0/3) ,  0, (int) pourcentLongueur(103.0/3), canvasHeight, "background_accueil_ile","background_accueil_ile", true, 80);
-        ballon = new Bouton(p.getContext(),pourcentLongueur(198/3) ,0 ,pourcentLongueur(93/3), canvasHeight, "background_accueil_ile_ballon","background_accueil_ile_ballon", true, 80);
+        //Initailise game
+        Game.getPartie();
+        Game.setContext(p.getContext());
+        ListOfMovable.initialize();
+
+        fond = new Movable(0,0,canvasWidth,canvasHeight,"background_accueil", true, 100, 0, 0, 0, 0);
+        boutonStartGame = new Bouton(pourcentLongueur(94.0/3) ,  0, (int) pourcentLongueur(103.0/3), canvasHeight, "background_accueil_ile","background_accueil_ile", true, 80);
+        ballon = new Bouton(pourcentLongueur(198/3) ,0 ,pourcentLongueur(93/3), canvasHeight, "background_accueil_ile_ballon","background_accueil_ile_ballon", true, 80);
 
         hudJoueur = new Image(p.getContext(), pourcentLongueur(18/3),
                 pourcentHauteur(21/1.5), pourcentLongueur(140/3), (int) pourcentHauteur(107/1.5), "accueil_hud_perso", 10);
 
-        boutonXp = new Bouton(p.getContext(), pourcentLongueur(22.0/3), pourcentHauteur(27.0/1.5), (int) pourcentLongueur(55.0/3), (int) pourcentHauteur(17/1.5), "accueil_hud_boutonxp","accueil_hud_boutonxp_clicked", true, 80);
-        boutonPiece = new Bouton(p.getContext(), pourcentLongueur(22.0/3), pourcentHauteur(48.0/1.5), (int) pourcentLongueur(55.0/3), (int) pourcentHauteur(17/1.5), "accueil_hud_boutonpiece","accueil_hud_boutonpiece_clicked", true, 80);
-        boutonGemme = new Bouton(p.getContext(), pourcentLongueur(22.0/3), pourcentHauteur(69.0/1.5), (int) pourcentLongueur(55.0/3), (int) pourcentHauteur(17/1.5), "accueil_hud_boutongemme","accueil_hud_boutongemme_clicked", true, 80);
-        boutonInfo = new Bouton(p.getContext(), pourcentLongueur(22.0/3), pourcentHauteur(105/1.5), (int) pourcentLongueur(18.0/3), (int) pourcentHauteur(18/1.5), "accueil_hud_boutoninfo","accueil_hud_boutoninfo_clicked", true, 80);
-        boutonPlay = new Bouton(p.getContext(), pourcentLongueur(59.0/3), pourcentHauteur(105/1.5), (int) pourcentLongueur(18.0/3), (int) pourcentHauteur(18/1.5), "accueil_hud_boutonplay","accueil_hud_boutonplay_clicked", true, 80);
-        boutonOption = new Bouton(p.getContext(), pourcentLongueur(3.0/3), pourcentHauteur(3.0/1.5), (int) pourcentLongueur(17.0/3), (int) pourcentHauteur(17/1.5), "button_option","button_option_clicked", true, 80);
+        boutonXp = new Bouton(pourcentLongueur(22.0/3), pourcentHauteur(27.0/1.5), (int) pourcentLongueur(55.0/3), (int) pourcentHauteur(17/1.5), "accueil_hud_boutonxp","accueil_hud_boutonxp_clicked", true, 80);
+        boutonPiece = new Bouton(pourcentLongueur(22.0/3), pourcentHauteur(48.0/1.5), (int) pourcentLongueur(55.0/3), (int) pourcentHauteur(17/1.5), "accueil_hud_boutonpiece","accueil_hud_boutonpiece_clicked", true, 80);
+        boutonGemme = new Bouton(pourcentLongueur(22.0/3), pourcentHauteur(69.0/1.5), (int) pourcentLongueur(55.0/3), (int) pourcentHauteur(17/1.5), "accueil_hud_boutongemme","accueil_hud_boutongemme_clicked", true, 80);
+        boutonInfo = new Bouton(pourcentLongueur(22.0/3), pourcentHauteur(105/1.5), (int) pourcentLongueur(18.0/3), (int) pourcentHauteur(18/1.5), "accueil_hud_boutoninfo","accueil_hud_boutoninfo_clicked", true, 80);
+        boutonPlay = new Bouton(pourcentLongueur(59.0/3), pourcentHauteur(105/1.5), (int) pourcentLongueur(18.0/3), (int) pourcentHauteur(18/1.5), "accueil_hud_boutonplay","accueil_hud_boutonplay_clicked", true, 80);
+        boutonOption = new Bouton(pourcentLongueur(3.0/3), pourcentHauteur(3.0/1.5), (int) pourcentLongueur(17.0/3), (int) pourcentHauteur(17/1.5), "button_option","button_option_clicked", true, 80);
 
         nbPiece = new PixelText(p.getContext(), ""+Compte.getCompte().getPieces(), pourcentLongueur(44.5/3), pourcentHauteur(54/1.5), pourcentHauteur(7/1.5),pourcentLongueur(0.18) ,true);
         nbGemmes = new PixelText(p.getContext(), ""+Compte.getCompte().getGemmes(), pourcentLongueur(44.5/3), pourcentHauteur(75/1.5), pourcentHauteur(7/1.5),pourcentLongueur(0.18) ,true);

@@ -6,13 +6,13 @@ public abstract class Destroyable extends Movable{
     private int hp;
     private final int maxHp;
 
-    public Destroyable(Context context, double posX,
+    public Destroyable(double posX,
                        double posY, int tailleX, int tailleY,
                        String cheminImages, boolean isAnimating,
                        double enfoncementTop, double enfoncementBottom,
                        double enfoncementLeft, double enfoncementRight,
                        int timeCentiBetweenFrame, int hp, int maxHp) {
-        super(context, posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight);
+        super(posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight);
         this.hp = hp;
         this.maxHp = maxHp;
     }
@@ -23,7 +23,7 @@ public abstract class Destroyable extends Movable{
         }
     }
     public void destroy(){
-        Game.getPartie().getCarte().setObjetsCarte(this.getPosXTile(false), this.getPosYTile(false), null);
+        Game.getPartie().getCarte().setObjetsCarte(this.getPosXTile(false), this.getPosYTile(false), 1, null);
     }
     public int getHp(){
         return hp;

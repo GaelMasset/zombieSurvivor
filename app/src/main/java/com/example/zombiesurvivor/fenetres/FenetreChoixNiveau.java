@@ -27,12 +27,12 @@ public class FenetreChoixNiveau extends Fenetre{
 
     public FenetreChoixNiveau(Page p) {
         super(p);
-        fond = new Movable(p.getContext(), 0,0,canvasWidth,canvasHeight,"mapchoose_background", true, 100, 0, 0, 0, 0);
+        fond = new Movable(0,0,canvasWidth,canvasHeight,"mapchoose_background", true, 100, 0, 0, 0, 0);
         iles.add(new IleDescriptor(
                 new PixelText(p.getContext(), "accueil", pourcentLongueur(123.0/3), pourcentHauteur(39.0/1.5), pourcentHauteur(10.0/1.5),pourcentLongueur(0.18) ,true),
-                new Bouton(p.getContext(), pourcentLongueur(32.0/3), pourcentHauteur(51.0/1.5), (int) pourcentLongueur(35.0/3), (int) pourcentHauteur(51.0/1.5), "mapchoose_ile1_","mapchoose_ile", true, 80),
-                new Bouton(p.getContext(), pourcentLongueur(131.0/3), pourcentHauteur(88.0/1.5), (int) pourcentLongueur(19.0/3), (int) pourcentHauteur(19.0/1.5), "mapchoose_playbutton","mapchoose_playbutton_clicked", true, 80),
-                new Bouton(p.getContext(), pourcentLongueur(96.0/3), pourcentHauteur(88.0/1.5), (int) pourcentLongueur(19.0/3), (int) pourcentHauteur(19.0/1.5), "mapchoose_infobutton","mapchoose_infobutton_clicked", true, 80),
+                new Bouton(pourcentLongueur(32.0/3), pourcentHauteur(51.0/1.5), (int) pourcentLongueur(35.0/3), (int) pourcentHauteur(51.0/1.5), "mapchoose_ile1_","mapchoose_ile", true, 80),
+                new Bouton(pourcentLongueur(131.0/3), pourcentHauteur(88.0/1.5), (int) pourcentLongueur(19.0/3), (int) pourcentHauteur(19.0/1.5), "mapchoose_playbutton","mapchoose_playbutton_clicked", true, 80),
+                new Bouton(pourcentLongueur(96.0/3), pourcentHauteur(88.0/1.5), (int) pourcentLongueur(19.0/3), (int) pourcentHauteur(19.0/1.5), "mapchoose_infobutton","mapchoose_infobutton_clicked", true, 80),
                 new Image(p.getContext(), pourcentLongueur(27.0/3), pourcentHauteur(34.0/1.5), (int) pourcentLongueur(128.0/3), (int) pourcentHauteur(78.0/1.5), "mapchoose_ile1_hud", 80)
                 ));
     }

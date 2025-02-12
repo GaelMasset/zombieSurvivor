@@ -34,28 +34,29 @@ public class FenetreTest extends Fenetre {
         super(p);
 
         joystickDeplacement = new Joystick(p.getContext(), pourcentLongueur(15) ,canvasHeight-pourcentHauteur(26), pourcentLongueur(6), pourcentLongueur(4), "joystick_bottom_1", "joystick_top_1");
-        boutonAttaque = new Bouton(p.getContext(), canvasWidth-pourcentLongueur(15) ,canvasHeight-pourcentHauteur(26), pourcentLongueur(8), pourcentLongueur(8), "joystick_bottom_","joystick_bottom_", false, 100);
+        boutonAttaque = new Bouton( canvasWidth-pourcentLongueur(15) ,canvasHeight-pourcentHauteur(26), pourcentLongueur(8), pourcentLongueur(8), "joystick_bottom_","joystick_bottom_", false, 100);
 
 
-        //Initailise game
-        Game.getPartie();
-        Game.setContext(p.getContext());
 
-        Game.getPartie().setJoueur(new Player(page.getContext(), 3000, 3000, 80, 96,
-                "character",100, 79,0,0,0, true, 100, 50,100, 5,
+
+        Game.getPartie().setJoueur(new Player(3000, 3000, 64, 72,
+                "character",100, 40,0,0,0, true, 100, 50,100, 5,
                 joystickDeplacement, boutonAttaque));
+        System.out.println("Chargement de la carte ...");
+        long now = System.currentTimeMillis();
         Map c = GenerateurNiveau.genererCarte(page.getContext());
+        System.out.println("Chargement terminé, temps : " + (System.currentTimeMillis()-now));
         Game.getPartie().setCarte(c);
         Game.getPartie().setFond(new Image(Game.getPartie().getContext(), 0, 0, MainActivity.canvasWidth, MainActivity.canvasHeight,"example_background" , 80));
 
         inventoryPage = new InventoryPage();
 
-        Bow arme = new Bow(page.getContext(), 0, 0, 80, 96, "item_bow", false, 100,0,0, 0, 0, 0,95, 120,
-                new Bullet(p.getContext(),0, 0, 36, 20, "pistol_bullet", false, 100,0,0,0,0, 5, 10, 0, 2000),1, 100);
+        Bow arme = new Bow( 0, 0, Game.getPartie().getJoueur().getTailleX(), Game.getPartie().getJoueur().getTailleY(), "item_bow", false, 100,0,0, 0, 0, 0,95, 120,
+                new Bullet(0, 0, 36, 20, "pistol_bullet", false, 100,0,0,0,0, 5, 10, 0, 2000),1, 100);
 
-        PotionSoin pot = new PotionSoin(page.getContext(), 0, 0, 80, 96, "item_potion", false, 100,0 , 0, 0, 0, 0, 250, 100);
+        PotionSoin pot = new PotionSoin(0, 0, Game.getPartie().getJoueur().getTailleX(), Game.getPartie().getJoueur().getTailleY(), "item_potion", false, 100,0 , 0, 0, 0, 0, 250, 100);
 
-        WeaponBaton armeMelee = new WeaponBaton(page.getContext(), 0, 0, 80, 96, "item_sword1", false, 20,60, 0, 0, 0, 0, 40, 10, 150);
+        WeaponBaton armeMelee = new WeaponBaton(0, 0, Game.getPartie().getJoueur().getTailleX(), Game.getPartie().getJoueur().getTailleY(), "item_sword1", false, 20,60, 0, 0, 0, 0, 40, 10, 150);
 
 
         Game.getPartie().getJoueur().getHotbar().add(pot,1);

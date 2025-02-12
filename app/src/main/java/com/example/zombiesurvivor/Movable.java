@@ -6,13 +6,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.LruCache;
 
 import java.util.ArrayList;
 
 public class Movable implements Cloneable {
-
-    final Context context;
+    protected Context context;
     protected double posX;
     protected double posY;
     protected int tailleX;
@@ -23,7 +24,7 @@ public class Movable implements Cloneable {
     public double enfoncementRight;
     protected double depassementTop;
     protected double depassementBottom;
-    protected double depasssementLeft;
+    protected double depassementLeft;
     protected double depassementRight;
     protected String cheminImages;
     protected boolean isAnimating;
@@ -45,11 +46,11 @@ public class Movable implements Cloneable {
     /*
     Constructor
      */
-    public Movable(Context context, double posX, double posY, int tailleX, int tailleY,
+    public Movable(double posX, double posY, int tailleX, int tailleY,
                    String cheminImages, boolean isAnimating, int timeCentiBetweenFrame,
                    double enfoncementTop, double enfoncementBottom,
                    double enfoncementLeft, double enfoncementRight) {
-        this.context = context;
+        this.context = Game.getPartie().getContext();
         this.posX = posX;
         this.posY = posY;
         this.tailleX = tailleX;
@@ -77,13 +78,34 @@ public class Movable implements Cloneable {
             }
         }
     }
-    public Movable(Context context, double posX, double posY, int tailleX, int tailleY,
+    public Movable(Movable m ){
+        this.context = Game.getPartie().getContext();
+        this.posX = m.posX;
+        this.posY = m.posY;
+        this.tailleX = m.tailleX;
+        this.tailleY = m.tailleY;
+        this.cheminImages = m.cheminImages;
+        this.isAnimating = m.isAnimating;
+        this.timeCentiBetweenFrame = m.timeCentiBetweenFrame;
+        this.enfoncementTop = m.enfoncementTop;
+        this.enfoncementBottom = m.enfoncementBottom;
+        this.enfoncementLeft = m.enfoncementLeft;
+        this.enfoncementRight = m.enfoncementRight;
+        this.depassementBottom = m.depassementBottom;
+        this.depassementRight = m.depassementRight;
+        this.depassementTop = m.depassementTop;
+        this.depassementLeft = m.depassementLeft;
+        this.currentCentiFrame = m.currentCentiFrame;
+        this.tags = m.tags;
+        this.images = m.images;
+    }
+    public Movable(double posX, double posY, int tailleX, int tailleY,
                    String cheminImages, boolean isAnimating, int timeCentiBetweenFrame,
                    double enfoncementTop, double enfoncementBottom,
                    double enfoncementLeft, double enfoncementRight,
                    double depasssementTop, double depassementBottom,
                    double depassementLeft, double depassementRight) {
-        this.context = context;
+        this.context = Game.getPartie().getContext();
         this.posX = posX;
         this.posY = posY;
         this.tailleX = tailleX;
@@ -98,7 +120,7 @@ public class Movable implements Cloneable {
         this.depassementBottom = depassementBottom;
         this.depassementRight = depassementRight;
         this.depassementTop = depasssementTop;
-        this.depasssementLeft = depassementLeft;
+        this.depassementLeft = depassementLeft;
 
         // Chargement et mise en cache des images
         int i = 1;
@@ -107,10 +129,11 @@ public class Movable implements Cloneable {
             int resId = context.getResources().getIdentifier(cheminImages + i, "drawable", context.getPackageName());
             if (resId != 0) {
                 String imageName = cheminImages + i; // Nom unique pour chaque image
-                Bitmap bitmap = loadBitmap(imageName, resId, (int)(tailleX+depasssementLeft+depassementRight), (int) (tailleY+depassementBottom+depasssementTop));
+                Bitmap bitmap = loadBitmap(imageName, resId, (int)(tailleX+ this.depassementLeft +depassementRight), (int) (tailleY+depassementBottom+depasssementTop));
                 images.add(bitmap);
                 i++;
             } else {
+                if(i == 1) System.out.println("ATTETION : AUCUNE IMAGE TROUVEE POUR : " + cheminImages);
                 moreImg = false;
             }
         }
@@ -212,9 +235,13 @@ public class Movable implements Cloneable {
     Methods
      */
     public void draw(Canvas canvas) {
-        canvas.drawBitmap(images.get(currentCentiFrame / timeCentiBetweenFrame), (float) ((float) posX-depasssementLeft),
-                (float) ((float) posY-depassementTop), null);
+        // Dessin de l'image principale
+        canvas.drawBitmap(images.get(currentCentiFrame / timeCentiBetweenFrame),
+                (float) (posX - depassementLeft),
+                (float) (posY - depassementTop),
+                null);
     }
+
 
     public void update() {
         if (isAnimating) {
@@ -233,32 +260,36 @@ public class Movable implements Cloneable {
         double m2Left, m2Right, m2Top, m2Bottom;
 
         if (usingEnfoncement) {
-            m1Left = m1.getPosX() + m1.enfoncementLeft;
-            m1Right = m1.getPosX() + m1.getTailleX() - m1.enfoncementRight;
-            m1Top = m1.getPosY() + m1.enfoncementTop;
-            m1Bottom = m1.getPosY() + m1.getTailleY() - m1.enfoncementBottom;
+            // Enfoncement et dépassement actifs
+            m1Left   = m1.getPosX() - m1.depassementLeft + m1.enfoncementLeft;
+            m1Right  = m1.getPosX() + m1.getTailleX() + m1.depassementRight - m1.enfoncementRight;
+            m1Top    = m1.getPosY() - m1.depassementTop + m1.enfoncementTop;
+            m1Bottom = m1.getPosY() + m1.getTailleY() + m1.depassementBottom - m1.enfoncementBottom;
 
-            m2Left = m2.getPosX() + m2.enfoncementLeft;
-            m2Right = m2.getPosX() + m2.getTailleX() - m2.enfoncementRight;
-            m2Top = m2.getPosY() + m2.enfoncementTop;
-            m2Bottom = m2.getPosY() + m2.getTailleY() - m2.enfoncementBottom;
+            m2Left   = m2.getPosX() - m2.depassementLeft + m2.enfoncementLeft;
+            m2Right  = m2.getPosX() + m2.getTailleX() + m2.depassementRight - m2.enfoncementRight;
+            m2Top    = m2.getPosY() - m2.depassementTop + m2.enfoncementTop;
+            m2Bottom = m2.getPosY() + m2.getTailleY() + m2.depassementBottom - m2.enfoncementBottom;
         } else {
-            m1Left = m1.getPosX();
-            m1Right = m1.getPosX() + m1.getTailleX();
-            m1Top = m1.getPosY();
-            m1Bottom = m1.getPosY() + m1.getTailleY();
+            // Seulement dépassement actif
+            m1Left   = m1.getPosX() - m1.depassementLeft;
+            m1Right  = m1.getPosX() + m1.getTailleX() + m1.depassementRight;
+            m1Top    = m1.getPosY() - m1.depassementTop;
+            m1Bottom = m1.getPosY() + m1.getTailleY() + m1.depassementBottom;
 
-            m2Left = m2.getPosX();
-            m2Right = m2.getPosX() + m2.getTailleX();
-            m2Top = m2.getPosY();
-            m2Bottom = m2.getPosY() + m2.getTailleY();
+            m2Left   = m2.getPosX() - m2.depassementLeft;
+            m2Right  = m2.getPosX() + m2.getTailleX() + m2.depassementRight;
+            m2Top    = m2.getPosY() - m2.depassementTop;
+            m2Bottom = m2.getPosY() + m2.getTailleY() + m2.depassementBottom;
         }
 
-        return !(m1Right <= m2Left ||
-                m1Left >= m2Right ||
-                m1Bottom <= m2Top ||
-                m1Top >= m2Bottom);
+        // Vérification de la collision (si les boîtes se chevauchent)
+        return !(m1Right <= m2Left ||  // m1 est complètement à gauche de m2
+                m1Left >= m2Right ||  // m1 est complètement à droite de m2
+                m1Bottom <= m2Top ||  // m1 est complètement au-dessus de m2
+                m1Top >= m2Bottom);   // m1 est complètement en dessous de m2
     }
+
 
     public static Movable isOneTouching(Movable m1, ArrayList<? extends Movable> m2) {
         for (Movable m : m2) {
@@ -297,5 +328,21 @@ public class Movable implements Cloneable {
 
     public void removeTag(Tag tag) {
         if(this.hasTag(tag)) tags.remove(tag);
+    }
+
+    public double getDepassementTop() {
+        return depassementTop;
+    }
+
+    public double getDepassementBottom() {
+        return depassementBottom;
+    }
+
+    public double getDepassementLeft() {
+        return depassementLeft;
+    }
+
+    public double getDepassementRight() {
+        return depassementRight;
     }
 }

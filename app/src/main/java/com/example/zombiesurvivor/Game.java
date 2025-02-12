@@ -71,7 +71,7 @@ public class Game {
     }
 
     public void addMonster(){
-        this.mobs.add(new Loup(context, 2500, 3000, 63, 66, "monster_wolf", 0, 0, 0, 0, true, 50, 50, 50, 0.2, 30, 100));
+        this.mobs.add(new Loup(2500, 3000, 63, 66, "monster_wolf", 0, 0, 0, 0, true, 50, 50, 50, 0.2, 30, 100));
     }
 
     public Player getJoueur(){

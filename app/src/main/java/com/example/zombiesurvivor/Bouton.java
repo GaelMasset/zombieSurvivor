@@ -11,8 +11,8 @@ public class Bouton extends Movable{
     private boolean isPressed;
 
     private ArrayList<Bitmap> imagesClicked = new ArrayList<Bitmap>();
-    public Bouton(Context context, double posX, double posY, int tailleX, int tailleY, String cheminImages, String cheminImagesClicked, boolean isAnimating, int timeCentiBetweenFrame) {
-        super(context, posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, 0,0,0,0);
+    public Bouton(double posX, double posY, int tailleX, int tailleY, String cheminImages, String cheminImagesClicked, boolean isAnimating, int timeCentiBetweenFrame) {
+        super(posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, 0,0,0,0);
         //Decode all images that has the same name as the provided string
         int i = 1;
         boolean moreImg = true;

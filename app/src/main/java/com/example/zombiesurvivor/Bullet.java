@@ -11,19 +11,19 @@ public class Bullet extends Movable {
     private double range;
 
     // Constructeur
-    public Bullet(Context context, double posX, double posY, int tailleX, int tailleY,
+    public Bullet(double posX, double posY, int tailleX, int tailleY,
                   String cheminImages, boolean isAnimating, int timeCentiBetweenFrame,
                   double enfoncementTop, double enfoncementBottom,
                   double enfoncementLeft, double enfoncementRight,
                   double vitesse, int damage, double angle, double range) {
-        super(context, posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight);
+        super(posX, posY, tailleX, tailleY, cheminImages, isAnimating, timeCentiBetweenFrame, enfoncementTop, enfoncementBottom, enfoncementLeft, enfoncementRight);
         this.vitesse = vitesse;
         this.damage = damage;
         this.angle = angle; // Angle de tir en radians
         this.range = range;
     }
     public Bullet(Bullet b, double angle, double range) {
-        super(b.context, b.posX, b.posY, b.tailleX, b.tailleY, b.cheminImages, b.isAnimating, b.timeCentiBetweenFrame, b.enfoncementTop, b.enfoncementBottom, b.enfoncementLeft, b.enfoncementRight);
+        super(b.posX, b.posY, b.tailleX, b.tailleY, b.cheminImages, b.isAnimating, b.timeCentiBetweenFrame, b.enfoncementTop, b.enfoncementBottom, b.enfoncementLeft, b.enfoncementRight);
 
         this.vitesse = b.vitesse;
         this.damage = b.damage;

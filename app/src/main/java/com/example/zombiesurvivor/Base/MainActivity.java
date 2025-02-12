@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     public static int canvasWidth;
     public static int offsetX;
     public static int offsetY;
-    public static float targetHauteur = 600;
+    public static float targetHauteur = 500;
     public static float facteurZoom;
 
 

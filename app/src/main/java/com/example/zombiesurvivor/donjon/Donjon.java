@@ -20,14 +20,14 @@ public class Donjon {
         this.longueurTile = longueurTile;
 
         for(int i = 1; i <= longueurTile*hauteurTile; i++){
-            tiles.add(new Movable(Game.getPartie().getContext(), posX+(i%longueurTile)*TAILLE_CASE,
+            tiles.add(new Movable(posX+(i%longueurTile)*TAILLE_CASE,
                     (i/TAILLE_CASE)*posY, TAILLE_CASE,
                     TAILLE_CASE, cheminDj+i, true, 100,
                     0, 0,0,0
                     ));
             tiles.get(i-1).addTag(Tag.DONJON);
         }
-        tiles.set(0, new Movable(Game.getPartie().getContext(), posX*TAILLE_CASE, posY*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, "example_2tile",
+        tiles.set(0, new Movable(posX*TAILLE_CASE, posY*TAILLE_CASE, TAILLE_CASE, TAILLE_CASE, "example_2tile",
                 true, 100, 50, 0, 0, 0,
                 TAILLE_CASE, 0, 0, 0));
         tiles.get(0).addTag(Tag.SOLIDE);
